@@ -3,7 +3,7 @@
         <div style="font-size:40px;font-family: 'Bree Serif', serif;">Food we Offer:</div>
         <div class="q-pt-md row q-gutter-lg">
             <q-card class="my-card" style="width:200px;height:200px">
-                <img src="statics/pics/foo.jpeg">
+                <img src="statics/pics/food.jpeg">
                 <q-card-section align="left" style="margin:3px;padding:1px">
                 <div class="row">
                 <div class="column">       
@@ -17,7 +17,7 @@
             </q-card>
 
             <q-card class="my-card" style="width:200px;height:200px">
-                <img src="statics/pics/foo.jpeg">
+                <img src="statics/pics/food.jpeg">
                 <q-card-section align="left" style="margin:3px;padding:1px">
                 <div class="row">
                 <div class="column">       
@@ -31,7 +31,7 @@
             </q-card>
 
             <q-card class="my-card" style="width:200px;height:200px">
-                <img src="statics/pics/foo.jpeg">
+                <img src="statics/pics/food.jpeg">
                 <q-card-section align="left" style="margin:3px;padding:1px">
                 <div class="row">
                 <div class="column">       
@@ -45,7 +45,7 @@
             </q-card>
 
             <q-card class="my-card" style="width:200px;height:200px">
-                <img src="statics/pics/foo.jpeg">
+                <img src="statics/pics/food.jpeg">
                 <q-card-section align="left" style="margin:3px;padding:1px">
                 <div class="row">
                 <div class="column">       
@@ -59,7 +59,7 @@
             </q-card>
 
             <q-card class="my-card" style="width:200px;height:200px">
-                <img src="statics/pics/foo.jpeg">
+                <img src="statics/pics/food.jpeg">
                 <q-card-section align="left" style="margin:3px;padding:1px">
                 <div class="row">
                 <div class="column">       

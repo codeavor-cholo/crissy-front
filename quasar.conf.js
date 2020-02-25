@@ -68,7 +68,8 @@ module.exports = function (ctx) {
         'QSeparator',
         'QDialog',
         'QDate',
-        'QInput'
+        'QInput',
+        'QSelect'
       ],
       directives: [
         'ClosePopup'
