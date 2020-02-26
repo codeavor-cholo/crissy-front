@@ -13,7 +13,13 @@
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "axios": "^0.18.1",
-    "quasar": "^1.0.0"
+    "firebase": "^7.9.1",
+    "lodash": "^4.17.15",
+    "moment": "^2.24.0",
+    "quasar": "^1.0.0",
+    "simple-random-id": "^1.0.1",
+    "vue-firestore": "^0.3.30",
+    "vue-stripe-checkout": "^3.1.6"
   },
   "devDependencies": {
     "@quasar/app": "^1.0.0"

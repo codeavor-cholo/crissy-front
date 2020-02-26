@@ -15,16 +15,23 @@
         </div>
 
         <div class="row justify-between q-pt-lg">
-            <q-img src="statics/pics/dinnerware.jpg" style="height:400px;width:550px" />    
-            <div>
-             <q-card flat class="my-card bg-grey-3 column justify-center" style="height:400px;width:550px">
+            <q-img src="statics/pics/dinnerware.jpg" style="height:400px;" class="col-6" />    
+            <div class="col q-ml-lg">
+             <q-card flat class="my-card bg-grey-3 col" style="height:400px;">
                 <q-card-section>
                     <div class="column items-center q-pa-sm q-pb-lg" style="font-size:30px;font-family: 'Arvo', serif;"><b>BOOK YOUR EVENT NOW</b></div>
                     <div class="column q-gutter-lg">
-                    <q-input dense filled v-model="name" label="Event Name" />
+                    <div class="row ">
+                      <span class="col-3 q-pl-md q-pt-md text-weight-bold text-grey-8">EVENT NAME</span>
+                      <q-input filled v-model="name" color="orange-8" class="col q-mr-md q-ml-md" />
+                    </div>
+                    <div class="row ">
+                      <span class="col-3 q-pl-md q-pt-md text-weight-bold text-grey-8">EVENT TYPE</span>
+                      <q-select v-model="eventType" :options="mapEvent" :emit-value="true" filled color="orange-8" class="col q-mr-md q-ml-md" />
+                    </div>
                     </div>
                     <div class="q-pa-sm q-pt-lg column items-center">
-                    <q-btn dense style="width:250px;height:50px" color="orange-4" text-color="white" @click="$router.push('/reservation')" label="PROCEED TO RESERVATION" />
+                    <q-btn dense style="width:250px;height:50px" color="orange-4" text-color="white" @click="proceedToReservations" label="PROCEED TO RESERVATION" />
                     </div>
                 </q-card-section>
              </q-card>
@@ -195,6 +202,59 @@ export default {
   data () {
     return {
       name: '',
+      eventType: '',
+      Event: []
+    }
+  },
+  mounted(){
+      this.$binding('Event', this.$firestoreApp.collection('Event'))
+      .then(Event => {
+      console.log(Event, 'Event')
+      })
+  },
+  computed:{
+    mapEvent(){
+      let map = this.Event.map(a=>{
+        return {
+          label:a.event,
+          value:a.event
+        }
+      })
+      return map
+    }
+  },
+  methods:{
+    proceedToReservations(){
+      //local storage code
+
+      if(this.name == '' || this.eventType == ''){
+          this.$q.dialog({
+            title: `Unable To Continue`,
+            message: 'Please Fill Up Required Fields',
+            type: 'negative',
+            color: 'orange-6',
+            textColor: 'grey',
+            icon: 'warning',
+            ok: 'Ok'
+        })
+      }
+
+
+      let saveLocally = {
+        clientEvent: this.name,
+        clientEventType: this.eventType
+      }
+
+
+      this.$q.localStorage.clear()
+      console.log(saveLocally,'save')
+      let sri = require('simple-random-id')
+      let random = sri(9)
+      this.$q.localStorage.set(random, saveLocally)
+      console.log(this.$q.localStorage.getItem(random),'data locally')
+      //push to reservation with key
+
+      this.$router.push('/reservation/'+random)
     }
   }
 }
