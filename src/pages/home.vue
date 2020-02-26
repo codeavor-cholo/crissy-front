@@ -14,7 +14,7 @@
             <q-tabs v-model="tab">
             <q-route-tab name="ho"  to="/" ><b>Home</b></q-route-tab>
             <q-route-tab name="men" to="/menu"><b>Menu</b></q-route-tab>
-            <q-route-tab name="gal" to=""><b>Gallery</b></q-route-tab>
+            <q-route-tab name="gal" to="/"><b>Gallery</b></q-route-tab>
             <q-route-tab name="pac" to="/packages"><b>Packages</b></q-route-tab>
             </q-tabs>
           </div>
