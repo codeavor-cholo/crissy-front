@@ -95,10 +95,12 @@
                                 >
                                     <q-tab name="PER PAX"  label="PER PAX PACKAGES" />
                                     <q-tab name="FIXED" label="FIXED PAX PACKAGES" />
+                                    <q-tab name="CUSTOMIZE" label="CUSTOMIZE PACKAGE" />
                                 </q-tabs>
                                 <q-separator  />
+                                <div v-show="tab !== 'CUSTOMIZE'">
                                         <h6 class="q-my-sm text-weight-light full-width text-center" style="font-size:1.2em;">Click the card to select package.</h6>
-                                        <q-table grid :data="tab == 'PER PAX' ? returnPerPax : returnFixed" :columns="columns" :filter="filter" class="full-width align-center " :selected.sync="selectedPackage" row-key="name" selection="single">
+                                        <q-table grid :data="tab == 'PER PAX' ? returnPerPax : returnFixed" :columns="columns" :filter="filter" class="full-width align-center " :selected.sync="selectedPackage" row-key="name" selection="single" :pagination.sync="pagination">
                                         <template v-slot:item="props">
                                             <div class="q-pa-xs col-xs-12 col-sm-6 col-md-6 col-lg-6 grid-style-transition " :style="props.selected ? 'transform: scale(0.95);' : ''" >
                                                 <q-card class="my-card cursor-pointer"  style="border-radius:20px" @click.native="props.selected = !props.selected" :class="props.selected ? 'bg-orange-8 text-white' : 'text-grey-8'">
@@ -145,7 +147,12 @@
                                             </div>
                                         </template>
                                     </q-table>
-  
+                                 </div>
+                                 <div v-show="tab == 'CUSTOMIZE'" class="text-center">
+                                  <h6 class="q-mb-none">DO YOU WANT TO CUSTOMIZE YOUR OWN PACKAGE ?</h6>
+                                  <span class="text-subtitle2 text-orange"><q-icon name="info"/> Prices will be base on company's pricing of food, services and add-ons and also the total package price will not have any form of discounts.</span>
+                                  <h6 class="q-my-sm text-weight-light full-width text-center" style="font-size:1.2em;">Click the <b>continue</b> to proceed to <b>package customization</b>.</h6>
+                                 </div>
                                 
                                 <q-stepper-navigation>
                                 <q-btn @click="step = 4" color="orange-8" label="Continue" />
@@ -195,16 +202,13 @@
 <!-- END OF LEFT PART -->
 
 <!-- RIGHT PART -->
+          <q-page-sticky position="top-right" :offset="[18, 18]" class="col-4 q-pl-md">
             <div class="col-4 q-pl-md">
                 <q-card class="my-card shadow-0" style="border-radius:20px;">
                     <q-card-section>
                        
                         <div class="column items-center q-pa-sm">
-                             <q-card flat class="my-card bg-grey-3" style="width:300px">
-                                <q-card-section>
-                                    <div class="column items-center">Order Summary - #04b7643</div>
-                                </q-card-section>
-                              </q-card>
+                          <span class="text-h6 q-mx-md">RESERVATION#: {{$route.params.id}}</span>
                         </div>
        
                         <div class="q-pa-sm row justify-between">
@@ -252,7 +256,8 @@
 
                     </q-card-section>
                  </q-card>
-            </div>    
+            </div> 
+          </q-page-sticky>   
 <!-- END OF RIGHT PART -->
 
         </div>
@@ -281,6 +286,7 @@ export default {
      City: [],
      Motif: [],
      Packages: [],
+     Category: [],
     filter: '',
     pagination: { sortBy: 'Category', descending: false, page: 1, rowsPerPage: 10},
     columns: [
@@ -361,8 +367,13 @@ export default {
     },
     foodChoice(){
         try {
-          let viands = this.selectedPackage[0].category
-          console.log(viands)
+          let viands
+          if(this.tab == 'CUSTOMIZE') {
+            viands = this.Category
+          } else {
+            viands = this.selectedPackage[0].category
+          }
+          console.log(viands,'viands')
           let foodWithPriceInViands = []
           let foods =  this.Food
           for(var x = 0; x < foods.length; x++){
@@ -420,26 +431,28 @@ export default {
       }
     },
     checkQty(food,qty,viandName){
-      console.log(food)
-      console.log(qty)
-      console.log(viandName, 'yeah')
-      let selection = this.choiceOfFood
-      console.log(selection,'selection')
-      //get QTY of viand in selection
-      let count = this.$lodash.filter(selection, a=>{
-        return a.category == viandName
-      })
-      if(count.length > qty){
-        this.$q.dialog({
-            title: viandName + ' Selection Max Reached',
-            message: 'Removing last food choice.',
-            ok: 'Ok',
-            persistent: true
-          }).onOk(() => {
-            this.choiceOfFood.splice(selection.length-1,1)
-            console.log('removed last')
-            console.log(selection)
-          })
+      if(this.tab !== 'CUSTOMIZE'){
+        console.log(food)
+        console.log(qty)
+        console.log(viandName, 'yeah')
+        let selection = this.choiceOfFood
+        console.log(selection,'selection')
+        //get QTY of viand in selection
+        let count = this.$lodash.filter(selection, a=>{
+          return a.category == viandName
+        })
+        if(count.length > qty){
+          this.$q.dialog({
+              title: viandName + ' Selection Max Reached',
+              message: 'Removing last food choice.',
+              ok: 'Ok',
+              persistent: true
+            }).onOk(() => {
+              this.choiceOfFood.splice(selection.length-1,1)
+              console.log('removed last')
+              console.log(selection)
+            })
+        }
       }
 
     },
