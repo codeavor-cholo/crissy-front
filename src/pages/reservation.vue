@@ -7,7 +7,7 @@
                     <q-card-section>
                         <div class="q-pa-md row" style="font-size:30px;font-family: 'Montserrat', sans-serif;">
                         <q-input v-model="reservation.clientEvent" type="text" label="Event Name" size="lg" outlined color="orange-8" class="col q-mr-md" rounded/>
-                        <q-select v-model="reservation.clientEventType" :options="mapEvent" emit-value label="Event Type" outlined color="orange-8 " class="col-3" rounded/>
+                        <q-select v-model="reservation.clientEventType" :options="mapEvent" emit-value label="Event Type" outlined color="orange-8 " class="col-3" rounded :disable="step > 3" @input="selectedPackage = []"/>
                         </div>
                         <q-stepper
                             v-model="step"
@@ -15,8 +15,8 @@
                             done-color="teal"
                             active-color="orange-8"
                             animated
-                            header-nav=""
                             flat
+                            header-nav=""
                             >
                             <q-step
                                 :name="1"
@@ -95,7 +95,7 @@
                                     </div>
                                 </div>
                                 
-                                <q-stepper-navigation>
+                                <q-stepper-navigation class="q-mt-md">
                                 <q-btn @click="step = 3" color="orange-8" label="Continue" />
                                 <q-btn flat @click="step = 1" color="orange-8" label="Back" class="q-ml-sm" />
                                 </q-stepper-navigation>
@@ -174,8 +174,8 @@
                                  </div>
                                 
                                 <q-stepper-navigation>
-                                <q-btn @click="step = 4,details1 = false,details2 = true" color="orange-8" label="Continue" />
-                                <q-btn flat @click="step = 2,details1 = true,details2 = false" color="orange-8" label="Back" class="q-ml-sm" />
+                                <q-btn @click="step = 4,details1 = false,details2 = true,details3 = false,details4 = false,details5 = false" color="orange-8" label="Continue" />
+                                <q-btn flat @click="step = 2,details1 = true,details2 = false,details3 = false,details4 = false,details5 = false" color="orange-8" label="Back" class="q-ml-sm" />
                                 </q-stepper-navigation>
                             </q-step>
 
@@ -188,6 +188,8 @@
 
                                 <div v-for="(food,i) in foodChoice" :key="i" v-show="selectedPackage != null">
                                   <span class="q-mb-none q-mt-md text-h6 text-weight-light"> Select <span class="text-orange-8 text-h6">{{returnLimit(food.category)}}</span> Choice<span v-show="returnLimit(food.category) > 1">s</span> of {{food.category}}  </span>
+                                  <br>
+                                  <span class="text-caption" v-show="tab == 'CUSTOMIZE'">additional ₱{{food.price}} per choice of dish (in per pax price)</span>
                                   <div class="row q-mt-md q-mb-md">
                                         <q-card class="my-card col-4 q-ma-sm cursor-pointer" v-for="(choice,j) in food.foodChoices" :key="j" :style="returnSelectedStatus(choice) ? 'transform: scale(0.95);' : ''" :class="returnSelectedStatus(choice) ? 'bg-orange text-white' : ''" style="border-radius:20px;" @click.native="clickUnclick(choice),checkQty(choice,returnLimit(food.category),food.category)">
                                         <q-img 
@@ -209,8 +211,8 @@
                                   </div>
                                 </div>
                                 <q-stepper-navigation>
-                                <q-btn @click="step = 5,details3 = true, details2 = false" color="orange-8" label="Continue" />
-                                <q-btn flat @click="step = 3,details1 = true, details2 = false" color="orange-8" label="Back" class="q-ml-sm" />
+                                <q-btn @click="step = 5,details3 = true, details2 = false,details1 = false,details4 = false,details5 = false" color="orange-8" label="Continue" />
+                                <q-btn flat @click="step = 3,details1 = true, details2 = false,details3 = false,details4 = false,details5 = false" color="orange-8" label="Back" class="q-ml-sm" />
                                 </q-stepper-navigation>
                             </q-step>
                             <q-step
@@ -271,7 +273,7 @@
                           </div>
                                 <q-stepper-navigation>
                                 <q-btn @click="step = 6" color="orange-8" label="Continue" />
-                                <q-btn flat @click="step = 4,details2 = true,details3 = false" color="orange-8" label="Back" class="q-ml-sm" />
+                                <q-btn flat @click="step = 4,details2 = true,details3 = false,details1 = false,details4 = false,details5 = false" color="orange-8" label="Back" class="q-ml-sm" />
                                 </q-stepper-navigation>
                           </q-step>
                           <q-step
@@ -331,7 +333,8 @@
                               </div>                          
                           </div> 
                                 <q-stepper-navigation>
-                                <q-btn @click="step = 7,details4 = true,details3= false" color="orange-8" label="Continue" />
+                                <q-btn @click="step = 7,details4 = true,details3= false,details1 = false,details2 = false,details5 = false" color="orange-8" label="Continue" v-if="tab !== 'CUSTOMIZE'"/>
+                                <q-btn @click="step = 8,details5 = true,details3= false,details1 = false,details2 = false,details4 = false" color="orange-8" label="Continue" v-else/>
                                 <q-btn flat @click="step = 5" color="orange-8" label="Back" class="q-ml-sm" />
                                 </q-stepper-navigation>                           
                           </q-step>  
@@ -340,11 +343,12 @@
                               title="Select Additional Food (optional)"
                               icon="fastfood"
                               :done="step > 7"
+                              v-show="tab != 'CUSTOMIZE'"
                           >  
                           <div v-for="(food,i) in foodChoiceAddons" :key="i">
                             <span class="q-mb-none q-mt-md text-h6 text-weight-light"> Select Additional Choice of {{food.category}}</span>
                             <br>
-                            <span class="text-caption">(additional ₱{{food.price}} per choice of dish in the per head price)</span>
+                            <span class="text-caption">additional ₱{{food.price}} per choice of dish (in per pax price)</span>
                             <div class="row q-mt-md q-mb-md">
                                   <q-card class="my-card col-4 q-ma-sm cursor-pointer" v-for="(choice,j) in food.foodChoices" :key="j" :style="returnSelectedStatusAdd(choice) ? 'transform: scale(0.95);' : ''" :class="returnSelectedStatusAdd(choice) ? 'bg-orange text-white' : ''" style="border-radius:20px;" @click.native="clickUnclickAdd(choice)">
                                   <q-img 
@@ -366,7 +370,7 @@
                             </div>
                           </div>                      
                                 <q-stepper-navigation>
-                                <q-btn @click="step = 8" color="orange-8" label="Continue" />
+                                <q-btn @click="step = 8,details5 = true,details4 = false,details1 = false,details2 = false,details3 = false" color="orange-8" label="Continue" />
                                 <q-btn flat @click="step = 6" color="orange-8" label="Back" class="q-ml-sm" />
                                 </q-stepper-navigation>   
                           </q-step>  
@@ -376,9 +380,13 @@
                               icon="description"
                               :done="step > 8"
                           >      
+                                <q-checkbox color="orange-8" v-model="agreed" label="By clicking this checkbox you already read and agree with the company's terms and conditions." />
+
                                 <q-stepper-navigation>
-                                <q-btn @click="step = 9" color="orange-8" label="Continue" />
-                                <q-btn flat @click="step = 7" color="orange-8" label="Back" class="q-ml-sm" />
+                                <q-btn @click="step = 9" color="orange-8" label="Continue" :disabled="!agreed"/>
+
+                                <q-btn flat @click="step = 7" color="orange-8" label="Back" class="q-ml-sm" v-if="tab !== 'CUSTOMIZE'"/>
+                                <q-btn flat @click="step = 6" color="orange-8" label="Back" class="q-ml-sm" v-else/>
                                 </q-stepper-navigation>             
                           </q-step>  
                           <q-step
@@ -387,9 +395,33 @@
                               icon="date_range"
                               :done="step > 9"
                           >      
-
+                              <div v-if="paymentPermission == false">
+                                <span class="q-mb-none q-mt-md text-h6 text-weight-light"> Login First Before Proceeding to Payment</span>
+                                <br>
+                                <div class="row q-mt-md">
+                                  <q-btn  rounded color="orange-8" label="LOGIN VIA GOOGLE" @click="loginGoogle" />
+                                  <div class="q-ma-sm q-mx-lg">OR</div>
+                                  <q-btn  rounded color="grey-10" label="LOGIN VIA EMAIL AND PASSWORD"/>
+                                </div>
+                              </div>
+                              <div v-else>
+                                <span class="q-mb-none q-mt-md text-h6 text-weight-light"> Select Payment Terms</span>
+                                <div class="row q-mt-lg">
+                                  <q-select v-model="paymentTerms" :options="payOptions" color="orange-8" outlined="" rounded="" class="col"/>
+                                  <div class="col-3 text-orange-8 q-ml-md text-h6">
+                                    <div>₱ {{returnPaymentAmount}}</div>
+                                    <div class="text-caption">To Pay Amount</div>
+                                  </div>
+                                </div>
+                                <div class="row q-mt-lg q-pa-md bg-grey-2">
+                                   <stripe-elements ref="elementsRef" color="orange-8" :pk="publishableKey" :amount="returnPaymentAmount" @token="tokenCreated" @loading="loading = $event" outline class="col-8 q-mr-md">
+                                    </stripe-elements>
+                                    <q-btn outlined color="grey-10" class="col" size="md" rounded @click="submit" icon="payment"><b>&nbsp;&nbsp;PAY ₱ {{returnPaymentAmount}}</b></q-btn>
+                                </div>
+                                
+                              </div>
                                 <q-stepper-navigation>
-                                <q-btn flat @click="step = 7" color="orange-8" label="Back" class="q-ml-sm" />
+                                <q-btn flat @click="step = 8" color="orange-8" label="Back" class="q-ml-sm" />
                                 </q-stepper-navigation>             
                           </q-step>                                   
                         </q-stepper>
@@ -422,7 +454,7 @@
                               <div>{{formatTimeInput(sTime)}} - {{formatTimeInput(eTime)}}</div>
                           </div>
                           <div class="q-pa-sm row justify-between">
-                              <div>Total Number of People</div>
+                              <div>Number of Pax</div>
                               <div v-if="tab != 'FIXED'">{{pax}}</div>
                               <div v-else>{{returnPaxFixed}}
                               </div>
@@ -432,8 +464,8 @@
                               <div>{{returnSelectedPackagePrice}}</div>
                           </div>
                           <div class="q-pa-sm row justify-between" v-show="selectedPackage.length != 0">
-                              <div>Total</div>
-                              <div>{{returnPerPaxTotal}}</div>
+                              <div>Total Price</div>
+                              <div class="text-h6 text-orange-8">₱ {{returnPerPaxTotal}}</div>
                           </div>                          
                           <div> 
                           <q-separator inset class="black"/>
@@ -461,7 +493,24 @@
                           <div class="text-subtitle text-orange-8 text-center q-mt-md" v-show="choiceOfFood.length == 0">NO FOOD SELECTED YET</div>                 
                           <div class="q-pa-sm row justify-between" v-for="(choice,i) in choiceOfFood" :key="i" >
                               <div>{{choice.foodName}}</div>
-                              <div>x 1</div>
+                              <div v-if="tab !== 'CUSTOMIZE'">x 1</div>
+                              <div v-else class="text-orange-8 text-weight-bold">+ ₱{{choice.foodPrice}}
+                                <span class="text-grey-8 text-weight-light text-caption">per head</span>
+                              </div>
+                          </div>
+                          <q-separator spaced inset />
+                          <div class="q-pa-sm row justify-between" v-show="tab == 'CUSTOMIZE'">
+                            <div>TOTAL PER HEAD PRICE</div>
+                            <div class="text-h6  text-orange-8 text-weight-bold">₱ {{returnCustomPerHeadPrice}}</div>
+                          </div>
+                          <div class="q-pa-sm row justify-between" v-show="tab == 'CUSTOMIZE'">
+                            <div># of PAX</div>
+                            <div class="text-weight-bold">x {{pax}}</div>
+                          </div>
+                          <q-separator spaced inset />
+                          <div class="q-pa-sm row justify-between text-h6 " v-show="tab == 'CUSTOMIZE'">
+                            <div>Subtotal</div>
+                            <div class="text-orange-8 text-weight-bold">₱ {{returnCustomPerHeadPrice * pax}}</div>
                           </div>
                         </q-scroll-area>
                         </div>
@@ -477,7 +526,7 @@
                                     </span>
                                 </div>
                               </div>
-                              <div class="col-3 text-right">= <span :class="returnServiceQty(choice.services) != 'NO QTY!' ? 'text-orange-8 text-weight-bold' : 'text-weight-bold'" v-show="returnServiceQty(choice.services) != 'NO QTY!'">₱ {{returnServiceQty(choice.services) * choice.price}}</span></div>
+                              <div class="col-3 text-right"><span :class="returnServiceQty(choice.services) != 'NO QTY!' ? 'text-orange-8 text-weight-bold' : 'text-weight-bold'" v-show="returnServiceQty(choice.services) != 'NO QTY!'">₱ {{returnServiceQty(choice.services) * choice.price}}</span></div>
                               
                           </div>
                           <div class="text-center q-mt-sm text-overline">ADD-ONS</div>
@@ -490,40 +539,171 @@
                                     </span>
                                 </div>
                               </div> 
-                              <div class="col-3 text-right">= <span :class="returnAddOnsQty(choice.addons) != 'NO QTY!' ? 'text-orange-8 text-weight-bold' : 'text-weight-bold'" v-show="returnAddOnsQty(choice.addons) != 'NO QTY!'">₱ {{returnAddOnsQty(choice.addons) * choice.price}}</span></div>                       
+                              <div class="col-3 text-right"><span :class="returnAddOnsQty(choice.addons) != 'NO QTY!' ? 'text-orange-8 text-weight-bold' : 'text-weight-bold'" v-show="returnAddOnsQty(choice.addons) != 'NO QTY!'">₱ {{returnAddOnsQty(choice.addons) * choice.price}}</span></div>                       
                           </div>
-                            
+                          <q-separator spaced inset />
+                          <div class="q-pa-sm row justify-between">
+                            <div class="col">Total Price <br><span class="text-caption">(per head * per pax price)</span></div>   
+                            <div class="col-3 text-right">₱ {{returnPerPaxTotal}}</div>
+                          </div> 
+                          <div class="q-pa-sm row justify-between">
+                            <div>Total Services Price</div>   
+                            <div>₱ {{returnSelectedServicesTotal}}</div>
+                          </div> 
+                          <div class="q-pa-sm row justify-between">
+                            <div>Total Add-Ons Price</div>   
+                            <div>₱ {{returnSelectedAddonsTotal}}</div>
+                          </div> 
+                           <q-separator spaced inset />
+                          <div class="q-pa-sm row justify-between text-h6">
+                            <div>Subtotal</div>   
+                            <div class="text-orange-8">₱ {{returnTotalAfterServicesAddons}}</div>
+                          </div> 
                         </q-scroll-area>
                         </div>
                         <div v-show="details4">  
                         <q-scroll-area style="width: 100%; height: 70vh;" class="q-px-md" :visible="true">                         
                           <div class="text-center q-mt-sm text-overline">ADDITIONAL FOOD CHOICES</div>
-                          <div class="text-caption q-pa-md bg-grey-2">Selected <b>Additional Food Price</b> will be added to the <b>per head price of the package.</b></div>
                           <div class="text-subtitle text-orange-8 text-center q-mt-md" v-show="choiceOfFoodAdd.length == 0">NO ADDITIONAL FOOD SELECTED YET
 
                           </div>    
                           <div class="q-pa-sm row justify-between" v-for="(choice,i) in choiceOfFoodAdd" :key="i" >
                               <div>{{choice.foodName}}</div>
-                              <div class="text-orange-8 text-weight-bold">+ ₱{{choice.foodPrice}}</div>
+                              <div class="text-orange-8 text-weight-bold">+ ₱{{choice.foodPrice}}
+                                <span class="text-grey-8 text-weight-light text-caption">per head</span>
+                              </div>
                           </div>
+                           <q-separator spaced inset />
+                          <div class="q-pa-sm row justify-between">
+                            <div class="col">Total Price <br><span class="text-caption">(after addons & services)</span></div>   
+                            <div class="col-3 text-right">₱ {{returnTotalAfterServicesAddons}}</div>
+                          </div> 
+                          <div class="q-pa-sm row justify-between">
+                            <div>Additional Price/Pax Total</div>   
+                            <div>₱ {{returnTotalPerPaxAddFood}}</div>
+                          </div> 
+                          <div class="q-pa-sm row justify-between">
+                            <div>Total Number of Pax</div>   
+                            <div>x {{returnTotalNumberPax}}</div>
+                          </div> 
+                          <div class="q-pa-sm row justify-between">
+                            <div>Total Price<br><span class="text-caption">of the additional food</span></div>   
+                            <div class="text-weight-bold">₱ {{returnTotalPerPaxAddFood * returnTotalNumberPax}}</div>
+                          </div> 
+                           <q-separator spaced inset />
+                          <div class="q-pa-sm row justify-between text-h6">
+                            <div>Subtotal</div>   
+                            <div class="text-orange-8">₱ {{returnTotalAfterServicesAddons + (returnTotalPerPaxAddFood * returnTotalNumberPax)}}</div>
+                          </div> 
                         </q-scroll-area>
                         </div>
+                        <div v-show="details5">  
+                          <q-scroll-area style="width: 100%; height: 70vh;" class="q-px-md" :visible="true">                         
+                          <div class="text-center q-mt-sm text-overline">BILLING STATEMENT</div>                 
+                          <div class="q-pa-sm row justify-between">
+                              <div>Date</div>
+                              <div>{{$moment(reservedate).format('LL')}}</div>
+                          </div>
+                          <div class="q-pa-sm row justify-between">
+                              <div>Number of Pax</div>
+                              <div v-if="tab != 'FIXED'">{{pax}}</div>
+                              <div v-else>{{returnPaxFixed}}
+                              </div>
+                          </div>
+                          <div class="q-pa-sm row justify-between" v-show="selectedPackage.length != 0 && tab == 'PER PAX'">
+                              <div>Per Head Price</div>
+                              <div>₱ {{returnSelectedPackagePrice}}</div>
+                          </div>
+                          <div class="q-pa-sm row justify-between" v-show="tab == 'CUSTOMIZE'">
+                              <div>Per Head Price</div>
+                              <div>₱ {{returnCustomPerHeadPrice}}</div>
+                          </div>
+                          <div class="q-pa-sm row justify-between">
+                              <div>Total Price <br><span class="text-caption">(per head * per pax price)</span></div>
+                              <div class="text-orange-8">₱ {{returnPerPaxTotal}}</div>
+                          </div>   
+                          <div class="q-pa-sm row justify-between">
+                              <div class="text-overline">SERVICES</div>
+                              <div ><q-btn dense color="teal" :icon-right="showSelectedServices == true ? 'arrow_drop_up' :'arrow_drop_down'" :label="showSelectedServices == true ? 'hide SERVICES' :'show SERVICES'" @click="showSelectedServices = !showSelectedServices" size="xs" flat/></div>
+                          </div>
+                          <div class="q-pa-sm row justify-between text-caption" v-for="(choice,i) in selectedServices" :key="i" v-show="showSelectedServices">
+                                <div class="col">{{choice.services}} 
+                                <div :class="returnServiceQty(choice.services) == 'NO QTY!' ? 'text-orange-8 text-weight-bold' : 'text-caption'">{{returnServiceQty(choice.services)}}  
+                                  <span v-show="returnServiceQty(choice.services) != 'NO QTY!'" >* 
+                                    ₱ {{choice.price}}
+                                    </span>
+                                </div>
+                              </div> 
+                              <div class="col-3 text-right">₱ {{returnServiceQty(choice.services) * choice.price}}</div>
+                          </div>
+                           <div class="q-pa-sm row justify-between">
+                              <div>Total Services Price</div>
+                              <div class="text-orange-8">₱ {{returnSelectedServicesTotal}}</div>
+                          </div>  
+                          <div class="q-pa-sm row justify-between">
+                              <div class="text-overline">ADD-ONS</div>
+                              <div ><q-btn dense color="teal" :icon-right="showSelectedAddons == true ? 'arrow_drop_up' :'arrow_drop_down'" :label="showSelectedAddons == true ? 'hide add-ons' :'show add-ons'" @click="showSelectedAddons = !showSelectedAddons" size="xs" flat/></div>
+                          </div>
+                          <div class="q-pa-sm row justify-between text-caption" v-for="(choice,i) in selectedAddOns" :key="i" v-show="showSelectedAddons">
+                                <div class="col">{{choice.addons}} 
+                                <div :class="returnAddOnsQty(choice.addons) == 'NO QTY!' ? 'text-orange-8 text-weight-bold' : 'text-caption'">{{returnAddOnsQty(choice.addons)}}  
+                                  <span v-show="returnAddOnsQty(choice.addons) != 'NO QTY!'" >* 
+                                    ₱ {{choice.price}}
+                                    </span>
+                                </div>
+                              </div> 
+                              <div class="col-3 text-right">₱ {{returnAddOnsQty(choice.addons) * choice.price}}</div>
+                          </div>
+                           <div class="q-pa-sm row justify-between">
+                              <div>Total Add-Ons Price</div>
+                              <div class="text-orange-8">₱ {{returnSelectedAddonsTotal}}</div>
+                          </div>  
+                          <div class="q-pa-sm row justify-between" v-show="tab !== 'CUSTOMIZE'">
+                              <div class="text-overline">ADDITIONAL FOODS</div>
+                              <div ><q-btn dense color="teal" :icon-right="showAddtionalFoods == true ? 'arrow_drop_up' :'arrow_drop_down'" :label="showAddtionalFoods == true ? 'hide add-ons' :'show add-ons'" @click="showAddtionalFoods = !showAddtionalFoods" size="xs" flat/></div>
+                          </div>
+                          <div class="q-pa-sm row justify-between text-caption" v-for="(choice,i) in choiceOfFoodAdd" :key="i" v-show="showAddtionalFoods">
+                              <div class="col">{{choice.foodName}} </div> 
+                              <div class="col-3 text-right">+ ₱ {{choice.foodPrice}} <span class="text-grey-8 text-weight-light text-caption">per head</span></div>
+                          </div>
+                           <div class="q-pa-sm row justify-between" v-show="tab !== 'CUSTOMIZE'">
+                            <div>Additional Price/Pax Total</div>   
+                            <div>₱ {{returnTotalPerPaxAddFood}}</div>
+                          </div> 
+                          <div class="q-pa-sm row justify-between" v-show="tab !== 'CUSTOMIZE'">
+                            <div>Total Price<br><span class="text-caption">of the additional food for <b>{{returnTotalNumberPax}} pax</b></span></div>   
+                            <div class="text-orange-8">₱ {{returnTotalPerPaxAddFood * returnTotalNumberPax}}</div>
+                          </div>  
+                          <q-separator spaced inset />   
+                          <div class="q-pa-sm row justify-between text-h6">
+                            <div>SUBTOTAL</div>   
+                            <div class=" text-orange-8" v-if="tab == 'CUSTOMIZE'">₱ {{returnTotalAfterServicesAddons}}</div>
+                            <div class="text-orange-8" v-else>₱ {{returnTotalAfterServicesAddons + (returnTotalPerPaxAddFood * returnTotalNumberPax)}}</div>
+                          </div>                        
+                          </q-scroll-area>
+                        </div>
+
 
                         <div class="row justify-between" v-show="details1">
                             <div></div>
-                           <q-btn color="orange-8" icon-right="arrow_right" label="food choices" @click="details2 = true,details1 = false" size="sm" flat dense/>
+                           <q-btn color="orange-8" icon-right="arrow_right" label="food choices" @click="details2 = true,details1 = false,details3 = false,details4 = false,details5 = false" size="sm" flat dense/>
                         </div> 
                         <div class="row justify-between" v-show="details2">
-                           <q-btn color="orange-8" icon="arrow_left" label="reservation details" @click="details2 = false,details1 = true" size="sm" flat dense/>
-                           <q-btn color="orange-8" icon-right="arrow_right" label="services and addons" @click="details3 = true,details2 = false" size="sm" flat dense/>
+                           <q-btn color="orange-8" icon="arrow_left" label="reservation details" @click="details2 = false,details1 = true,details3 = false,details4 = false,details5 = false" size="sm" flat dense/>
+                           <q-btn color="orange-8" icon-right="arrow_right" label="services and addons" @click="details3 = true,details2 = false,details1 = false,details4 = false,details5 = false" size="sm" flat dense/>
                         </div> 
                         <div class="row justify-between" v-show="details3">
-                           <q-btn color="orange-8" icon="arrow_left" label="FOOD CHOICES" @click="details3 = false,details2 = true" size="sm" flat dense/>
-                           <q-btn color="orange-8" icon-right="arrow_right" label="ADDITIONAL FOOD CHOICES" @click="details4 = true,details3 = false" size="sm" flat dense/>
+                           <q-btn color="orange-8" icon="arrow_left" label="FOOD CHOICES" @click="details3 = false,details2 = true,details1 = false,details4 = false,details5 = false" size="sm" flat dense/>
+                           <q-btn color="orange-8" icon-right="arrow_right" label="ADDITIONAL FOOD CHOICES" @click="details4 = true,details3 = false,details1 = false,details2 = false,details5 = false" size="sm" flat dense v-if="tab !== 'CUSTOMIZE'"/>
+                           <q-btn color="orange-8" icon-right="arrow_right" label="BILLING" @click="details5 = true,details3 = false,details1 = false,details4 = false,details2 = false" size="sm" flat dense v-else/>
                         </div> 
                         <div class="row justify-between" v-show="details4">
-                           <q-btn color="orange-8" icon="arrow_left" label="SERVICES AND ADDONS" @click="details4 = false,details3 = true" size="sm" flat dense/>
-                           <q-btn color="orange-8" icon-right="arrow_right" label="BILLING STATEMENT" @click="details5 = true,details4 = false" size="sm" flat dense/>
+                           <q-btn color="orange-8" icon="arrow_left" label="SERVICES AND ADDONS" @click="details4 = false,details3 = true,details1 = false,details2 = false,details5 = false" size="sm" flat dense/>
+                           <q-btn color="orange-8" icon-right="arrow_right" label="BILLING STATEMENT" @click="details5 = true,details4 = false,details1 = false,details2 = false,details3 = false" size="sm" flat dense/>
+                        </div> 
+                         <div class="row justify-between" v-show="details5">
+                           <q-btn color="orange-8" icon="arrow_left" label="ADDITIONAL FOOD CHOICES" @click="details5 = false,details4 = true,details3 = false,details2 = false,details1 = false" size="sm" flat dense/>
+                      
                         </div> 
                     </q-card-section>
                  </q-card>
@@ -534,39 +714,57 @@
         </div>
     </q-page>
 </template>
-
+<style>
+  #payment-form button {
+    display: none
+  }
+</style>
 <script>
 import { date } from 'quasar'
+import { StripeElements } from 'vue-stripe-checkout';
 export default {
+  components: {
+      StripeElements
+  },
   data () {
     return {
-    choiceOfFood: [],
-    choiceOfFoodAdd: [],
-    selectedPackage: [],
-    selectedTheme:[],
-     tab: 'PER PAX',   
-     step: 3,
-     fname: '',
-     lname: '',
-     pax: 50, 
-     place: '',
-     city: '',
-     motif: '',
-     sTime: '09:00',
-     eTime: '13:00',
-     reservation: {},
-     Event: [],
-     City: [],
-     Motif: [],
-     Packages: [],
-     Category: [],
-     Theme: [],
-    filter: '',
-    pagination: { sortBy: 'Category', descending: false, page: 1, rowsPerPage: 10},
-    columns: [
-        { name: 'name', required: true, label: 'Package name', align: 'center', field: 'name', sortable: true },
-        { name: 'price', align: 'center', label: 'Package Per Head Price', field: 'price', sortable: true },
-    ],
+      publishableKey: 'pk_test_kUO5j8FaZUKitD1Qh3ibZ2HP00YkxaEOOS', 
+      token: null,
+      charge: null,
+      paydetails: null,
+      paymentTerms: 'FULL PAYMENT',
+      payOptions: ['FULL PAYMENT','50% DOWNPAYMENT','RESERVATION FEE'],
+      showAddtionalFoods: false,
+      showSelectedServices: false,
+      showSelectedAddons: false,
+      agreed: false,
+      choiceOfFood: [],
+      choiceOfFoodAdd: [],
+      selectedPackage: [],
+      selectedTheme:[],
+      tab: 'PER PAX',   
+      step: 1,
+      fname: '',
+      lname: '',
+      pax: 50, 
+      place: '',
+      city: '',
+      motif: '',
+      sTime: '09:00',
+      eTime: '13:00',
+      reservation: {},
+      Event: [],
+      City: [],
+      Motif: [],
+      Packages: [],
+      Category: [],
+      Theme: [],
+      filter: '',
+      pagination: { sortBy: 'Category', descending: false, page: 1, rowsPerPage: 10},
+      columns: [
+          { name: 'name', required: true, label: 'Package name', align: 'center', field: 'name', sortable: true },
+          { name: 'price', align: 'center', label: 'Package Per Head Price', field: 'price', sortable: true },
+      ],
      reservedate: '' ,
      selectedServices: [],
      serviceQty: [],
@@ -578,11 +776,27 @@ export default {
      details2: false,
      details3: false,
      details4: false,
-     details5: false
+     details5: false,
+     paymentPermission: false,
+     clientUID: '',
+     clientEmail: ''
     }
   },
   created(){
       this.reservation = this.$q.localStorage.getItem(this.$route.params.id)
+      let self = this
+      this.$firebase.auth().onAuthStateChanged(function(user) {
+          if (user) {
+            console.log('with user')
+            self.clientUID = user.uid
+            self.clientEmail = user.email
+            self.paymentPermission = true
+          } else {
+            self.clientUID = ''
+            self.clientEmail = ''
+            self.paymentPermission = false
+          }
+      })
   },
   mounted(){
     this.$binding('Event', this.$firestoreApp.collection('Event'))
@@ -718,7 +932,8 @@ export default {
           let map = this.$lodash.map(groups,function(value,key){
             return {
               category: key,
-              foodChoices: value
+              foodChoices: value,
+              price: value[0].foodPrice
             }
           })
 
@@ -835,15 +1050,140 @@ export default {
       returnPerPaxTotal(){
         try {
           let packages = this.returnSelectedPackage
-          if(packages.type == 'FIXED'){
-            return packages.price
+          if(this.tab !== 'CUSTOMIZE'){
+            if(packages.type == 'FIXED'){
+              return packages.price
+            } else {
+              return packages.price * this.pax
+            }
           } else {
-            return packages.price * this.pax
+            return this.returnCustomPerHeadPrice * this.pax
+          }
+
+        } catch (error) {
+          return 0
+        }
+      },
+      mergePricingAddons(){
+        let keys = this.$lodash.keys(this.addOnsQty)
+        console.log(keys,'keys')  
+
+        if(this.selectedAddOns.length != keys.length){
+            console.log('no pricing')
+            return 0
+        } 
+        let merge = []
+        for( var x = 0; x < this.selectedAddOns.length; x++){
+            let m = {...this.selectedAddOns[x]}
+            delete m.foods
+            m.addonsQty = this.addOnsQty[m.addons]
+            merge.push(m)
+        }
+
+        console.log(merge,'merge')
+        return merge
+      },
+      returnSelectedAddonsTotal(){
+        try {
+            let select = this.mergePricingAddons
+            let sumMin = this.$lodash.sumBy(select, m=>{
+                return parseInt(m.price) * parseInt(m.addonsQty)
+            })
+
+            return sumMin
+        } catch(err){
+            return 0
+        }
+      },
+      mergePricingServices(){
+        let keys = this.$lodash.keys(this.serviceQty)
+        console.log(keys,'keys')
+
+        if(this.selectedServices.length != keys.length){
+            console.log('no pricing')
+            return 0
+        } 
+        let merge = []
+        for( var x = 0; x < this.selectedServices.length; x++){
+            let m = {...this.selectedServices[x]}
+            delete m.foods
+            m.servicesQty = this.serviceQty[m.services]
+            merge.push(m)
+        }
+
+        console.log(merge,'merge')
+        return merge
+      },
+      returnSelectedServicesTotal(){
+        try {
+            let select = this.mergePricingServices
+            let sumMin = this.$lodash.sumBy(select, m=>{
+                return parseInt(m.price) * parseInt(m.servicesQty)
+            })
+
+            return sumMin
+        } catch(err){
+            return 0
+        }
+      },
+      returnTotalAfterServicesAddons(){
+        return parseInt(this.returnPerPaxTotal) + parseInt(this.returnSelectedServicesTotal) + parseInt(this.returnSelectedAddonsTotal)
+      },
+      returnTotalPerPaxAddFood(){
+        try {
+          return this.$lodash.sumBy(this.choiceOfFoodAdd,a=>{return parseInt(a.foodPrice)})
+        } catch (error) {
+          return 0
+        }
+      },
+      returnTotalNumberPax(){
+        try {
+          let selected = this.selectedPackage[0]
+          if(selected.type == 'FIXED'){
+            if(selected.withKid){
+              return parseInt(selected.adultPax) + parseInt(selected.kidPax)
+            } else {
+              return parseInt(selected.adultPax)
+            }
+          } else {
+            return parseInt(this.pax)
           }
         } catch (error) {
           return 0
         }
-      }
+      },
+      returnTotalPriceAfterFoodAddOns(){
+        try {
+          return parseInt(this.returnTotalAfterServicesAddons) + (parseInt(this.returnTotalPerPaxAddFood)*parseInt(this.returnTotalNumberPax))
+        } catch (error) {
+          return this.returnTotalAfterServicesAddons 
+        }
+      },
+      returnCustomPerHeadPrice(){
+        return this.$lodash.sumBy(this.choiceOfFood, a=> {return parseInt(a.foodPrice)})
+      },
+      returnPaymentAmount(){
+        let pay = this.paymentTerms
+        let total = this.returnTotalPriceAfterFoodAddOns
+        let totalCustom = this.returnTotalAfterServicesAddons
+        if(pay == 'FULL PAYMENT'){
+          if(this.tab !== 'CUSTOM'){
+            return total
+          } else {
+            return totalCustom
+          } 
+        } else if (pay == '50% DOWNPAYMENT'){
+          if(this.tab !== 'CUSTOM'){
+            return total * .5
+          } else {
+            return totalCustom * .5
+          }           
+        } else if (pay == 'RESERVATION FEE'){
+          return 5000
+        } else {
+          return 1000000
+        }
+      },
 
   },
   methods:{
@@ -851,7 +1191,7 @@ export default {
         
     },
     dateToday(dates){
-        console.log('dates',dates)
+        // console.log('dates',dates)
         let today = new Date()
         let format = date.formatDate(today,'YYYY/MM/DD')
         if(format < dates){
@@ -1053,7 +1393,148 @@ export default {
       } catch (error) {
         return 'NO QTY'
       }
-    }
+    },
+    submit () {
+      this.$refs.elementsRef.submit();
+    },
+    tokenCreated (token) {
+      this.token = token;
+      console.log(token,'token')
+      // for additional charge objects go to https://stripe.com/docs/api/charges/object
+      this.charge = {
+        source: token.card,
+        amount: this.returnPaymentAmount,
+      }
+      this.sendTokenToServer(this.charge);
+    },
+    sendTokenToServer (charge) {
+      // Send to server
+      console.log(charge,'charge')
+      if(this.amount === 0){
+        this.$q.dialog({
+            title: `Unable to Continue??`,
+            message: 'Please Select Payment Type??',
+            color: 'orange-8',
+            textColor: 'grey',
+            icon: 'negative',
+            ok: 'Ok'
+        })
+      }else{
+          this.paydetails = charge
+          this.reservenowCard()
+      }
+    },
+    reservenowCard(){
+      let reserveDetails = {
+        clientReserveDate: this.reservedate,
+        clientFName: this.fname, // from display name if login via google
+        clientLName: this.lname, // from display name if login via google
+        clientPlace: this.place,
+        clientCity: this.city,
+        clientEvent: this.reservation.clientEvent,
+        clientMotif: this.motif,
+        clientPax: this.returnTotalNumberPax,
+        clientPaxDetails: this.tab === 'FIXED' ? this.returnPaxFixed : 'NONE',
+        clientEmail: this.clientEmail, // gmail
+        clientStartTime: this.formatTimeInput(this.sTime),
+        clientEndTime: this.formatTimeInput(this.eTime),
+        clientSelectTheme: this.selectedTheme,
+        clientSelectPackage: this.tab === 'CUSTOMIZE' ? 'CUSTOMIZE' : this.selectedPackage[0],
+        clientPackageType: this.tab,
+        clientFoodChoice: this.choiceOfFood,
+        clientAdditionalFood: this.choiceOfFoodAdd,
+        clientServices: this.mergePricingServices,
+        clientAddons: this.mergePricingAddons,
+        clientTotalPayment: this.tab === 'CUSTOMIZE' ? this.returnTotalAfterServicesAddons : this.returnTotalPriceAfterFoodAddOns, //total payment
+        clientPaidAmount: this.returnPaymentAmount,
+        clientPayDetails: this.paydetails,
+        clientTokenID: this.token.id,
+        clientPaymentType: 'CARD',
+        clientReserveType: 'ONLINE',
+        clientUID: this.clientUID,
+        clientDateofReserve: date.formatDate(new Date(), 'YYYY-MM-DD'),
+      }
+      console.log(reserveDetails,'reserveDetails')
+      this.$firestoreApp.collection('Reservation').add(reserveDetails)
+      .then((ref) =>{
+        let key = ref.id
+        let paymentDetails = {
+            clientReservationKey: ref.id,
+            clientPayDetails: this.paydetails,
+            clientTokenID: this.token.id,
+            clientPaymentType: 'CARD',
+            clientUID: this.clientUID,
+            clientEmail: this.clientEmail,
+            clientPaymentDate: date.formatDate(new Date(), 'YYYY-MM-DD')
+        }
+            this.$firestoreApp.collection('Payments').add(paymentDetails)
+            .then(()=>{
+                this.$q.notify({
+                  message: 'RESERVED!',
+                  icon: 'mdi-folder-plus-outline',
+                  color: 'orange-8',
+                  textColor: 'white',
+                  position: 'bottom'
+                })
+                this.$router.push('/profile')
+            })
+        })
+    },
+    loginGoogle(){
+        var provider = new this.$firebase.auth.GoogleAuthProvider();
+        this.$firebase.auth().signInWithPopup(provider)
+        .then((result)=>{
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          var token = result.credential.accessToken;
+          // The signed-in user info.
+          var user = result.user;
+          console.log('token',token)
+          console.log('user',user)
+
+          var uid = user.uid
+
+          //save user details in database with token / set to update always when login in
+          let newUser = {
+            gAccessToken: token,
+            displayName: user.displayName,
+            email: user.email,
+            emailVerified: user.emailVerified,
+            refreshToken: user.refreshToken
+          }
+
+          this.$firestoreApp.collection('Customers').doc(uid).set(newUser)
+          .then(()=>{
+            console.log('saved user')
+            //save progress for future reference
+            // console.log('progress', this.returnProgress)
+
+          })
+
+          console.log('newUser',newUser)
+
+        }).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // The email of the user's account used.
+        var email = error.email;
+        // The firebase.auth.AuthCredential type that was used.
+        var credential = error.credential;
+
+        console.log('error',errorCode)
+        console.log('error',errorMessage)
+        this.$q.dialog({
+            title: errorCode,
+            message: errorMessage,
+            color: 'pink-6',
+            textColor: 'grey',
+            icon: 'negative',
+            ok: 'Ok'
+        })
+        // ...
+        });
+                  
+    },
   }
 }
 </script>
