@@ -20,7 +20,7 @@
           </div>
 
           <div class="row items-center q-gutter-md" style="padding-right:30px;padding-left:260px">
-          <q-btn-dropdown dense class="bg-orange-4" v-show="!show" text-color="white" label="Codeavor">
+          <q-btn-dropdown dense  v-show="!show" text-color="orange-8" :label="displayName" flat="">
             <q-list>
               <q-item clickable v-close-popup @click="$router.push('/profile')">
                 <q-item-section>
@@ -28,9 +28,9 @@
                 </q-item-section>
               </q-item>
 
-              <q-item clickable v-close-popup @click="show=!show, $router.push('/')">
+              <q-item clickable v-close-popup @click="tempLogout">
                 <q-item-section>
-                  <q-item-label>Log OUt</q-item-label>
+                  <q-item-label>Log Out</q-item-label>
                 </q-item-section>
               </q-item>
 
@@ -82,8 +82,52 @@ export default {
     return {
       tab: 'ho',
       search: '',
-      show: true
+      show: true,
+      displayName: ''
     }
+  },
+  created() {
+          let self = this
+          this.$firebase.auth().onAuthStateChanged(function(user) {
+              
+              if (user) {
+                let gg = {...user}
+                console.log('createdUser',user)
+                console.log('createdUser',user.uid)
+                console.log('user',gg.displayName)
+                self.show = false
+                self.displayName = gg.displayName
+                
+              } else {
+                self.show = true
+              }
+          })
+  },
+  methods:{
+        tempLogout(){
+            this.$q.dialog({
+                title: `Are you sure you want to logout?`,
+                type: 'negative',
+                color: 'pink-3',
+                class: 'text-grey-8',
+                icon: 'warning',
+                ok: 'Ok',
+                cancel: 'Cancel',
+                persistent: true
+                
+            }).onOk(()=>{
+              this.$firebase.auth().signOut()
+              .then(()=>{
+                console.log('no user')
+                this.show = false
+                this.displayName = ''
+                this.$router.push('/')
+                location.reload()
+              })
+              // 
+              // remove this comment if you are done with the testing
+            })
+    },
   }
 }
 </script>

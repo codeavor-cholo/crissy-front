@@ -203,8 +203,24 @@ export default {
     return {
       name: '',
       eventType: '',
-      Event: []
+      Event: [],
+      displayName: '',
+      uid: ''
     }
+  },
+  created() {
+    let self = this
+    this.$firebase.auth().onAuthStateChanged(function(user) {
+        
+        if (user) {
+          let gg = {...user}
+          console.log('createdUser',user)
+          console.log('createdUser',user.uid)
+          console.log('user',gg.displayName)
+          self.uid = gg.uid
+          self.displayName = gg.displayName
+        }
+    })
   },
   mounted(){
       this.$binding('Event', this.$firestoreApp.collection('Event'))

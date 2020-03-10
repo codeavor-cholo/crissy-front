@@ -21,7 +21,8 @@ require('firebase/firestore')
   // "async" is optional
   export default async ({ Vue }) => {
     // something to do
-    Vue.prototype.$firebase = firebase2
+    Vue.prototype.$firebase2 = firebase2
+    Vue.prototype.$firebase = firebase
     Vue.prototype.$firestoreApp = firebase2.firestore()
     Vue.prototype.$auth = AUTH
     Vue.use(VueFirestore)
