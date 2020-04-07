@@ -52,13 +52,27 @@
 
 <!-- START OF MOBILE HEADER -->
     <div class="mobile-only">
-    <q-header class="bg-grey-11 text-white q-pa-sm" style="height:63px">
+    <q-header class="bg-grey-11 text-white">
       <q-toolbar>
-        <div class="row items-center">        
-        <div><img style="height:100%;width:60px" src="statics/pics/logo.png"></div>
-        <div><div class="q-pl-md row items-center q-gutter-md">
-          <q-btn-dropdown dense label="Account" v-show="!show" text-color="orange-8" flat="">
+        <div class="row q-py-sm items-center">        
+        <div class="q-pr-lg"><img style="height:100%;width:60px" src="statics/pics/logo.png"></div>
+        <div class="q-pl-xl row items-center">
+          
+          <q-input dense standout style="width:120px" v-model="search">
+            <template v-slot:append>
+              <q-icon name="search" color="orange" />
+            </template>
+          </q-input>
+          
+          <q-btn flat text-color="orange-7" style="font-size: 1.3em;" icon="account_circle" v-show="show" @click="show=!show"/>
+          
+          <q-btn-dropdown dense style="font-size: 1.3em;" icon="account_circle" v-show="!show" text-color="orange-8" flat="">
             <q-list>
+              <q-item>
+                <q-item-section>
+                  <q-item-label :label="displayName"></q-item-label>
+                </q-item-section>
+              </q-item>
               <q-item clickable v-close-popup @click="$router.push('/profile')">
                 <q-item-section>
                   <q-item-label>My Account</q-item-label>
@@ -70,20 +84,13 @@
                 </q-item-section>
               </q-item>
             </q-list>
-          </q-btn-dropdown>  
+          </q-btn-dropdown>
+        </div>
+          </div>
           
-          <q-btn flat text-color="black" label="Login" v-show="show" @click="show=!show"/>
-          <q-input dense standout style="width:120px" v-model="search">
-            <template v-slot:append>
-              <q-icon name="search" color="orange" />
-            </template>
-          </q-input>
-          </div>
-          </div>
-          </div>
       </q-toolbar>
 
-      <div class=" text-orange-4">
+      <div class="bg-grey-3  text-orange-4">
             <q-tabs v-model="tab">
             <q-route-tab name="ho"  to="/" ><b>Home</b></q-route-tab>
             <q-route-tab name="men" to="/menu"><b>Menu</b></q-route-tab>
@@ -106,7 +113,7 @@
 <!-- START OF MOBILE PAGE -->
     <div class="mobile-only">
     <q-page-container>
-      <router-view style="padding-top:50px;padding-bottom:50px" />
+      <router-view style="padding-bottom:50px" />
     </q-page-container>
     </div>
 <!-- END OF MOBILE PAGE -->

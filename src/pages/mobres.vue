@@ -15,7 +15,6 @@
                             active-color="orange-8"
                             animated
                             flat
-                            header-nav=""
                             >
                             <q-step
                                 :name="1"
