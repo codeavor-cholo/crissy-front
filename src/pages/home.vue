@@ -36,7 +36,7 @@
             </q-list>
           </q-btn-dropdown>  
           
-            <q-btn flat text-color="black" label="Login" v-show="show" @click="show=!show"/>
+            <q-btn flat text-color="black" label="Login" v-show="show" @click="login = true"/>
 
               <q-input dense standout style="width:300px" v-model="search">
                   <template v-slot:append>
@@ -53,18 +53,17 @@
 <!-- START OF MOBILE HEADER -->
     <div class="mobile-only">
     <q-header class="bg-grey-11 text-white">
-      <q-toolbar>
-        <div class="row q-py-sm items-center">        
-        <div class="q-pr-lg"><img style="height:100%;width:60px" src="statics/pics/logo.png"></div>
-        <div class="q-pl-xl row items-center">
-          
-          <q-input dense standout style="width:120px" v-model="search">
+      <q-toolbar class="q-py-sm">                
+        <img style="height:100%;width:60px" src="statics/pics/logo.png">
+                 <q-space />
+                 <q-space />
+          <q-input dense standout style="width:200px" v-model="search">
             <template v-slot:append>
               <q-icon name="search" color="orange" />
             </template>
           </q-input>
           
-          <q-btn flat text-color="orange-7" style="font-size: 1.3em;" icon="account_circle" v-show="show" @click="show=!show"/>
+          <q-btn flat text-color="orange-7" style="font-size: 1.3em;" icon="account_circle" v-show="show" @click="loginmob = true"/>
           
           <q-btn-dropdown dense style="font-size: 1.3em;" icon="account_circle" v-show="!show" text-color="orange-8" flat="">
             <q-list>
@@ -85,8 +84,6 @@
               </q-item>
             </q-list>
           </q-btn-dropdown>
-        </div>
-          </div>
           
       </q-toolbar>
 
@@ -166,6 +163,67 @@
     </q-footer>
     </div>
 <!-- END OF MOBILE FOOTER -->
+
+<!-- START OF LOGIN DIALOG DESKTOP -->
+    <div class="desktop-only">
+    <q-dialog v-model="login">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6 text-center">Login Account</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none text-center">
+          <q-input v-model="clientEmail" type="email" label="Enter Email Address" style="width:420px;" class="q-pa-sm q-px-md" outlined="" color="orange-7" dense/>
+          <q-input v-model="clientPassword" type="password" label="Enter Password" style="width:420px;" class="q-pa-sm q-px-md" outlined="" color="orange-7" dense/>
+          <div class="row q-px-md q-mt-md">
+                                
+          <q-btn color="orange-7"  label="LOGIN VIA GOOGLE" @click="loginGoogle" class="col-5"/>
+          <div class="text-overline text-center col-2">OR</div>
+          <q-btn color="grey" label="LOGIN account" class="col"/>
+
+          </div>
+          
+        </q-card-section>
+
+        <q-card-section class="q-pt-none q-mb-md text-center">
+          
+          
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+    </div>
+<!-- END OF LOGIN DIALOG DESKTOP -->
+
+<!-- START OF LOGIN DIALOG MOBILE -->
+    <div class="mobile-only">
+    <q-dialog v-model="loginmob">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6 text-center">Login Account</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none text-center">
+          <q-input v-model="clientEmail" type="email" label="Enter Email Address" class="q-pa-sm q-px-md" outlined="" color="orange-7" dense/>
+          <q-input v-model="clientPassword" type="password" label="Enter Password" class="q-pa-sm q-px-md" outlined="" color="orange-7" dense/>
+          
+          <div class="row q-px-md items-center q-mt-md">                     
+          <q-btn color="orange-7"  label="LOGIN VIA GOOGLE" @click="loginGoogle" class="col-5"/>
+          <div class="text-overline text-center col-2">OR</div>
+          <q-btn color="grey" label="LOGIN account" class="col"/>
+
+          </div>
+          
+        </q-card-section>
+
+        <q-card-section class="q-pt-none q-mb-md text-center">
+          
+          
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+    </div>
+<!-- END OF LOGIN DIALOG MOBILE -->
+
   </q-layout>
 </template>
 
@@ -174,6 +232,10 @@ export default {
   data () {
     return {
       tab: 'ho',
+      login: false,
+      loginmob: false,
+      clientEmail: '',
+      clientPassword: '',
       search: '',
       show: true,
       displayName: ''
@@ -197,11 +259,66 @@ export default {
           })
   },
   methods:{
+        loginGoogle(){
+        var provider = new this.$firebase.auth.GoogleAuthProvider();
+        this.$firebase.auth().signInWithPopup(provider)
+        .then((result)=>{
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          var token = result.credential.accessToken;
+          // The signed-in user info.
+          var user = result.user;
+          console.log('token',token)
+          console.log('user',user)
+
+          var uid = user.uid
+
+          //save user details in database with token / set to update always when login in
+          let newUser = {
+            gAccessToken: token,
+            displayName: user.displayName,
+            email: user.email,
+            emailVerified: user.emailVerified,
+            refreshToken: user.refreshToken
+          }
+
+          this.$firestoreApp.collection('Customers').doc(uid).set(newUser)
+          .then(()=>{
+            console.log('saved user')
+            //save progress for future reference
+            // console.log('progress', this.returnProgress)
+
+          })
+
+          console.log('newUser',newUser)
+
+        }).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // The email of the user's account used.
+        var email = error.email;
+        // The firebase.auth.AuthCredential type that was used.
+        var credential = error.credential;
+
+        console.log('error',errorCode)
+        console.log('error',errorMessage)
+        this.$q.dialog({
+            title: errorCode,
+            message: errorMessage,
+            color: 'pink-6',
+            textColor: 'grey',
+            icon: 'negative',
+            ok: 'Ok'
+        })
+        // ...
+        });
+                  
+    },
         tempLogout(){
             this.$q.dialog({
                 title: `Are you sure you want to logout?`,
                 type: 'negative',
-                color: 'pink-3',
+                color: 'orange-7',
                 class: 'text-grey-8',
                 icon: 'warning',
                 ok: 'Ok',
