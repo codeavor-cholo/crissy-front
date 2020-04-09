@@ -1,6 +1,20 @@
 <template>
   <q-layout view="hHh lpR fff">
 
+    <div class="fixed-center mobile-only" v-show="splashscreen">
+      <div class="q-pa-sm" >
+          <img class="col" style="width:250px;height:100%" src="statics/pics/logo.png">
+      </div>
+
+      <div class="row justify-center">
+      <q-spinner-pie
+        color="orange-7"
+        size="5em"
+      />
+      <q-tooltip :offset="[0, 8]">QSpinnerPie</q-tooltip>
+      </div>
+    </div>
+
 <!-- START OF DESKTOP HEADER -->
     <div class="desktop-only">
     <q-header class="bg-grey-11 text-white row items-center" style="height:63px">
@@ -51,7 +65,7 @@
 <!-- END OF DESKTOP HEADER -->
 
 <!-- START OF MOBILE HEADER -->
-    <div class="mobile-only">
+    <div class="mobile-only" v-show="!splashscreen">
     <q-header class="bg-grey-11 text-white">
       <q-toolbar class="q-py-sm">                
         <img style="height:100%;width:60px" src="statics/pics/logo.png">
@@ -108,7 +122,7 @@
 <!-- END OF DESKTOP PAGE -->
 
 <!-- START OF MOBILE PAGE -->
-    <div class="mobile-only">
+    <div class="mobile-only" v-show="!splashscreen">
     <q-page-container>
       <router-view style="padding-bottom:50px" />
     </q-page-container>
@@ -139,7 +153,7 @@
 <!-- END OF DESKTOP FOOTER -->
 
 <!-- START OF MOBILE FOOTER -->
-    <div class="mobile-only">
+    <div class="mobile-only" v-show="!splashscreen">
     <q-footer class="bg-black text-white">
       <q-toolbar>
         <q-toolbar-title>
@@ -195,7 +209,7 @@
 <!-- END OF LOGIN DIALOG DESKTOP -->
 
 <!-- START OF LOGIN DIALOG MOBILE -->
-    <div class="mobile-only">
+    <div class="mobile-only" v-show="!splashscreen">
     <q-dialog v-model="loginmob">
       <q-card>
         <q-card-section>
@@ -233,6 +247,7 @@ export default {
     return {
       tab: 'ho',
       login: false,
+      splashscreen: true,
       loginmob: false,
       clientEmail: '',
       clientPassword: '',
@@ -242,6 +257,11 @@ export default {
     }
   },
   created() {
+          setTimeout(() => {
+          this.splashscreen=false;
+          // console.log('sdf')
+          }, 7000)
+
           let self = this
           this.$firebase.auth().onAuthStateChanged(function(user) {
               
