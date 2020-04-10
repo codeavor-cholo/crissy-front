@@ -42,155 +42,66 @@
 
         <div class="q-pt-lg" style="font-size:30px;font-family: 'Bree Serif', serif;"><b>Enjoy our tasty foods to your heart's content.</b></div>
         <div class="q-py-lg row q-gutter-lg">
-            <q-card class="my-card" style="width:200px;height:200px">
-                <img src="statics/pics/food.jpeg">
-                <q-card-section align="left" style="margin:3px;padding:1px">
-                <div class="row">
-                <div class="column">       
-                <div class="q-pt-sm">     
-                <b>Breakfast Food</b>
-                </div>
-                <div class="text-subtitle2">20 items</div>
-                </div>
-                </div>
-                </q-card-section>
-            </q-card>
-
-            <q-card class="my-card" style="width:200px;height:200px">
-                <img src="statics/pics/food.jpeg">
-                <q-card-section align="left" style="margin:3px;padding:1px">
-                <div class="row">
-                <div class="column">       
-                <div class="q-pt-sm">     
-                <b>Breakfast Food</b>
-                </div>
-                <div class="text-subtitle2">20 items</div>
-                </div>
-                </div>
-                </q-card-section>
-            </q-card>
-
-            <q-card class="my-card" style="width:200px;height:200px">
-                <img src="statics/pics/food.jpeg">
-                <q-card-section align="left" style="margin:3px;padding:1px">
-                <div class="row">
-                <div class="column">       
-                <div class="q-pt-sm">     
-                <b>Breakfast Food</b>
-                </div>
-                <div class="text-subtitle2">20 items</div>
-                </div>
-                </div>
-                </q-card-section>
-            </q-card>
-
-            <q-card class="my-card" style="width:200px;height:200px">
-                <img src="statics/pics/food.jpeg">
-                <q-card-section align="left" style="margin:3px;padding:1px">
-                <div class="row">
-                <div class="column">       
-                <div class="q-pt-sm">     
-                <b>Breakfast Food</b>
-                </div>
-                <div class="text-subtitle2">20 items</div>
-                </div>
-                </div>
-                </q-card-section>
-            </q-card>
-
-            <q-card class="my-card" style="width:200px;height:200px">
-                <img src="statics/pics/food.jpeg">
-                <q-card-section align="left" style="margin:3px;padding:1px">
-                <div class="row">
-                <div class="column">       
-                <div class="q-pt-sm">     
-                <b>Breakfast Food</b>
-                </div>
-                <div class="text-subtitle2">20 items</div>
-                </div>
-                </div>
-                </q-card-section>
-            </q-card>
-       
+            <q-table grid :data="Food" :columns="columns" :rows-per-page-options="[0]" hide-bottom :pagination.sync="pagination" :filter="filter">
+                <template v-slot:item="props"> 
+                    <div class="row q-pa-sm">
+                        <q-card class="my-card" style="width:210px;height:200px">
+                            <img :src="props.row.foodPic" class="full-width" style="width:200px;height:130px">
+                            <q-card-section align="left" style="margin:3px;padding:1px;width: 200px">
+                            <div class="row">
+                            <div class="column">       
+                            <div class="q-pt-sm">     
+                            <b>{{props.row.foodName}}</b>
+                            </div>
+                            <div class="text-subtitle2">{{props.row.foodPrice}} php per head</div>
+                            </div>
+                            </div>
+                            </q-card-section>
+                        </q-card>
+                    </div>           
+                  </template>
+            </q-table>
         </div>    
-        
         <div class="float-right">
           <q-btn flat text-color="black" label="See More..." @click="$router.push('/menu')"/>
         </div>
         
         <div class="q-pt-xl" style="font-size:30px;font-family: 'Bree Serif', serif;"><b>Avail our packages to get discounts.</b></div>
         <div class="q-pt-lg row justify-around">
-            <q-card bordered class="bg-white my-card" style="max-width:500px">
-            <q-card-section class="column items-center">
-              <img style="height:100%;width:100px" src="statics/pics/logo.png">
-              <div style="font-size:50px;font-family: 'Lobster', cursive;">The Paradise</div>
-              <div style="font-size:13px"><b>170 per Head</b></div>
-              <div style="font-size:15px"><b>MENU</b></div>
-            </q-card-section>
-            
-            <div class="row items-center justify-center">
-              <div class="col">
-                <q-card-section class="column q-gutter-sm items-center">
-                  <div class="" style="font-size:17px"><b>MAIN DISH</b></div>
-                  <div class="q-pt-sm" style="font-size:12px">Lentif Salad with Cumin and Garlic</div>
-                  <div style="font-size:12px">Tabbouich with Mint and Parsier Puree</div>
-                  <div style="font-size:12px">Bobo Ghanoush with Pita Bread</div>
-                </q-card-section>
+            <q-table grid :data="Packages" :columns="columnss" :rows-per-page-options="[0]" hide-bottom :pagination.sync="paginations" row-key=".key">
+            <template v-slot:item="props">
+              <div class="q-pa-md">
+                  <q-card bordered style="width:542px;height:500px" class="bg-white my-card col-6 q-pa-md">
+                  <q-card-section class="column items-center">
+                    <img style="height:100%;width:100px" src="statics/pics/logo.png">
+                    <div style="font-size:47px;font-family: 'Lobster', cursive;">{{props.row.name}}</div>
+                    <div style="font-size:13px"><b>{{props.row.price}} per Head</b></div>
+                    <div style="font-size:15px"><b>MENU</b></div>
+                  </q-card-section>
+                  
+                  <div class="row items-center justify-center">
+                    <div class="col">
+                      <q-card-section class="column q-gutter-sm items-center">
+                        <div class="" style="font-size:17px"><b>Food Choice</b></div>
+                        <div v-for="(price, index) in props.row.category" :key="index" >
+                          <div class="q-pt-sm" style="font-size:12px"><i>{{ price.viandsQty }} viand<span v-show="price.viandsQty != '1'">s</span> of {{ price.category }}</i></div>
+                        </div>
+                      </q-card-section>
+                    </div>
+                    <q-separator vertical color="black" />
+                    <div class="col">
+                      <q-card-section class="column q-gutter-sm items-center">
+                        <div class="" style="font-size:17px"><b>Inclusion</b></div>
+                        <div v-for="(s, indexs) in props.row.inclusions" :key="indexs">
+                          <div style="font-size:12px"><i>{{ s.inclusion }}</i></div>
+                        </div>
+                      </q-card-section>
+                    </div>
+                  </div>
+                </q-card>
               </div>
-              <q-separator vertical color="black" />
-              <div class="col">
-                <q-card-section class="column q-gutter-sm items-center">
-                  <div class="" style="font-size:17px"><b>SIDE DISH</b></div>
-                  <div class="q-pt-sm" style="font-size:12px">Lentif Salad with Cumin and Garlic</div>
-                  <div style="font-size:12px">Tabbouich with Mint and Parsier Puree</div>
-                  <div style="font-size:12px">Bobo Ghanoush with Pita Bread</div>
-                </q-card-section>
-              </div>
-            </div>
-            
-            <div class="q-py-md column items-center q-gutter-sm">
-              <div style="font-size:17px"><b>Dessert</b></div>
-                <div class="q-pt-sm" style="font-size:12px">Lentif Salad with Cumin and Garlic</div>
-                <div style="font-size:12px">Tabbouich with Mint and Parsier Puree</div>
-                <div style="font-size:12px">Bobo Ghanoush with Pita Bread</div>
-            </div>    
-          </q-card>
-
-          <q-card bordered class="bg-white my-card" style="max-width:500px">
-            <q-card-section class="column items-center">
-              <img style="height:100%;width:100px" src="statics/pics/logo.png">
-              <div style="font-size:50px;font-family: 'Lobster', cursive;">The Paradise</div>
-              <div style="font-size:13px"><b>170 per Head</b></div>
-              <div style="font-size:15px"><b>MENU</b></div>
-            </q-card-section>
-            
-            <div class="row items-center justify-center">
-              <div class="col">
-                <q-card-section class="column q-gutter-sm items-center">
-                  <div class="" style="font-size:17px"><b>MAIN DISH</b></div>
-                  <div class="q-pt-sm" style="font-size:12px">Lentif Salad with Cumin and Garlic</div>
-                  <div style="font-size:12px">Tabbouich with Mint and Parsier Puree</div>
-                  <div style="font-size:12px">Bobo Ghanoush with Pita Bread</div>
-                </q-card-section>
-              </div>
-              <q-separator vertical color="black" />
-              <div class="col">
-                <q-card-section class="column q-gutter-sm items-center">
-                  <div class="" style="font-size:17px"><b>SIDE DISH</b></div>
-                  <div class="q-pt-sm" style="font-size:12px">Lentif Salad with Cumin and Garlic</div>
-                  <div style="font-size:12px">Tabbouich with Mint and Parsier Puree</div>
-                  <div style="font-size:12px">Bobo Ghanoush with Pita Bread</div>
-                </q-card-section>
-              </div>
-            </div>
-            
-            <div class="q-py-md column items-center q-gutter-sm">
-              <div style="font-size:17px"><b>Dessert</b></div>
-                <div class="q-pt-sm" style="font-size:12px">Lentif Salad with Cumin and Garlic</div>
-                <div style="font-size:12px">Tabbouich with Mint and Parsier Puree</div>
-                <div style="font-size:12px">Bobo Ghanoush with Pita Bread</div>
-            </div>    
-          </q-card>
+            </template>
+        </q-table>
             </div>
 
             <div class="float-right q-pt-sm">
@@ -392,6 +303,19 @@ export default {
       name: '',
       eventType: '',
       Event: [],
+      Food: [],
+      Packages: [],
+      pagination: { sortBy: 'Category', descending: false, page: 1, rowsPerPage: 5},
+      paginations: { sortBy: 'Category', descending: false, page: 2, rowsPerPage: 2},
+      columns: [
+            { name: 'category', required: true, label: 'Food Category', align: 'center', field: 'category', sortable: true },
+            { name: 'foodName', align: 'center', label: 'Food Name', field: 'foodName', sortable: true },
+            // { name: 'foodPrice', align: 'center', label: 'Package Price', field: 'foodPrice', sortable: true },
+        ],
+      columnss: [
+            { name: 'name', required: true, label: 'Package name', align: 'center', field: 'name', sortable: true },
+            { name: 'price', align: 'center', label: 'Package Per Head Price', field: 'price', sortable: true },
+        ],
       displayName: '',
       uid: ''
     }
@@ -414,7 +338,15 @@ export default {
       this.$binding('Event', this.$firestoreApp.collection('Event'))
       .then(Event => {
       console.log(Event, 'Event')
-      })
+      }),
+      this.$binding('Food', this.$firestoreApp.collection('Food'))
+        .then(Food => {
+        console.log(Food, 'Food')
+        }),
+      this.$binding('Packages', this.$firestoreApp.collection('Packages'))
+        .then(Packages => {
+        console.log(Packages, 'Packages')
+        })
   },
   computed:{
     mapEvent(){
