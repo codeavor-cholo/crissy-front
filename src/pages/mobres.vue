@@ -1,14 +1,12 @@
 <template>
     <q-page class="bg-grey-4">
-        <div class="row">
+        
 <!-- LEFT PART -->
-            <div class="col-8">
-                <!-- <q-btn color="primary" icon="check" label="reset db" @click="getTypeSaveDb" /> -->
-                <q-card class="my-card shadow-0" style="border-radius:20px;">
-                    <q-card-section>
-                        <div class="q-pa-md row" style="font-size:30px;font-family: 'Montserrat', sans-serif;">
-                        <q-input v-model="reservation.clientEvent" type="text" label="Event Name" size="lg" outlined color="orange-8" class="col q-mr-md" rounded/>
-                        <q-select v-model="reservation.clientEventType" :options="mapEvent" emit-value label="Event Type" outlined color="orange-8 " class="col-3" rounded :disable="step > 1" @input="selectedPackage = []"/>
+            <div class="q-pt-sm">
+                <q-card class="my-card shadow-0 q-pt-md" style="border-radius:20px;">      
+                        <div class="column q-px-md q-gutter-sm" style="font-size:30px;font-family: 'Montserrat', sans-serif;">
+                            <q-input dense v-model="reservation.clientEvent" type="text" label="Event Name" outlined color="orange-8" rounded/>
+                            <q-select dense v-model="reservation.clientEventType" :options="mapEvent" emit-value label="Event Type" outlined color="orange-8 " rounded :disable="step > 1" @input="selectedPackage = []"/>
                         </div>
                         <q-stepper
                             v-model="step"
@@ -17,7 +15,6 @@
                             active-color="orange-8"
                             animated
                             flat
-                            header-nav=""
                             >
                             <q-step
                                 :name="1"
@@ -25,16 +22,16 @@
                                 icon="calendar_today"
                                 :done="step > 1"
                             >
-                            <div class="row">
-                                <div class="col">
-                                <q-date v-model="reservedate" color="orange-4" landscape="" flat :options="date => dateToday(date)" :events="returnWithEvents"/>
+                            <div class="column">
+                                <div>
+                                    <q-date v-model="reservedate" color="orange-4" :options="date => dateToday(date)" :events="returnWithEvents"/>
                                 </div>
-                                <div class="col-4 q-ml-sm q-gutter-md">
+                                <div class="q-gutter-md q-pt-md">
                                     <div>
-                                        <q-input dense outlined  v-model="sTime" label="start time" type="time" color="orange-8" rounded/>
+                                        <q-input dense outlined  v-model="sTime" label="start time"  type="time" color="orange-8" rounded/>
                                     </div>
                                     <div>
-                                        <q-input dense outlined  v-model="eTime" label="end time" type="time" color="orange-8" rounded/>
+                                        <q-input dense outlined  v-model="eTime" label="end time"  type="time" color="orange-8" rounded/>
                                     </div>
                                 </div>
                               </div>
@@ -50,36 +47,31 @@
                                 :done="step > 2"
                             >
                                 <div class="column q-gutter-sm">
-
-                                    <div class="row q-gutter-md q-pt-md q-pl-sm q-mb-sm">
-                                        <div>    
-                                            <q-input dense outlined style="width:300px" v-model="fname" label="First Name" color="orange-8" rounded/>
-                                        </div>
-                                        <div>
-                                            <q-input dense outlined style="width:300px" v-model="lname" label="Last Name" color="orange-8" rounded/>        
-                                        </div>
+                                    <div>    
+                                        <q-input dense outlined v-model="fname" label="First Name" color="orange-8" rounded/>
+                                    </div>
+                                    <div>
+                                        <q-input dense outlined v-model="lname" label="Last Name" color="orange-8" rounded/>        
+                                    </div>
+                                    
+                                    <div>
+                                        <q-input outlined v-model="place" type="textarea" label="Event Adrress" color="orange-8" rounded/>
                                     </div>
 
-                                    <div class="q-mb-sm">
-                                        <q-input outlined v-model="place" type="textarea" style="width:615px" label="Event Adrress" color="orange-8" rounded/>
+                                    <div>
+                                        <q-select dense outlined v-model="city" :options="mapCity" emit-value label="Select City" color="orange-8"  rounded/>
                                     </div>
-
-                                    <div class="q-mb-sm">
-                                        <q-select dense outlined v-model="city" :options="mapCity" emit-value style="width:615px" label="Select City" color="orange-8"  rounded/>
+                                    
+                                    <div>
+                                        <q-input dense outlined type="number" v-model="pax" label="Pax" color="orange-8" rounded :min="50"/>
                                     </div>
-                                    <div class="column q-gutter-sm q-mb-sm">
-                                        <div class="row q-gutter-md">
-                                            <div>
-                                                <q-input dense outlined style="width:300px" type="number" v-model="pax" label="Pax" color="orange-8" rounded :min="50"/>
-                                            </div>
-                                            <div>
-                                                <q-select dense outlined style="width:300px" v-model="motif" label="Motif" :options="mapMotif" emit-value color="orange-8" rounded/>
-                                            </div>
-                                        </div>
+                                    <div>
+                                        <q-select dense outlined v-model="motif" label="Motif" :options="mapMotif" emit-value color="orange-8" rounded/>
                                     </div>
+                                    
                                      <span class="q-mb-none q-mt-md text-h6 text-weight-light"> Select <span class="text-orange-8 text-h6"> 1 </span> Theme (optional)</span>
                                     <div class="row q-mb-xl">
-                                        <q-card class="my-card col-4 q-ma-sm cursor-pointer" v-for="(choice,j) in Theme" :key="j" :style="returnSelectedStatusTheme(choice) ? 'transform: scale(0.95);' : ''" :class="returnSelectedStatusTheme(choice) ? 'bg-orange text-white' : ''" style="border-radius:20px;" @click.native="clickUnclickAddTheme(choice)">
+                                        <q-card class="my-card col-11 q-ma-sm cursor-pointer" v-for="(choice,j) in Theme" :key="j" :style="returnSelectedStatusTheme(choice) ? 'transform: scale(0.95);' : ''" :class="returnSelectedStatusTheme(choice) ? 'bg-orange text-white' : ''" style="border-radius:20px;" @click.native="clickUnclickAddTheme(choice)">
                                         <q-img 
                                           :src="choice.themePic"
                                           :ratio="3/2" />
@@ -108,12 +100,13 @@
                                 icon="assignment"
                                 :done="step > 3"
                             >
+
                                 <q-tabs
                                     v-model="tab"
                                     class="text-orange-8 bg-grey-2"
                                     align="justify"
                                 >
-                                    <q-tab name="PER PAX"  label="PER PAX PACKAGES" @click="selectedPackage = []" />
+                                    <q-tab name="PER PAX" label="PER PAX PACKAGES" @click="selectedPackage = []" />
                                     <q-tab name="FIXED" label="FIXED PAX PACKAGES" @click="selectedPackage = []"/>
                                     <q-tab name="CUSTOMIZE" label="CUSTOMIZE PACKAGE" @click="selectedPackage = []"/>
                                 </q-tabs>
@@ -128,10 +121,10 @@
                                                         <q-list dense>
                                                         <q-item class="q-mt-sm">
                                                             <q-item-section>
-                                                                <span class="full-width text-h6  text-weight-bold">{{props.row.name}}</span>
+                                                                <span class="full-width text-weight-bold" style="font-size:17px">{{props.row.name}}</span>
                                                             </q-item-section>
                                                             <q-item-section side :class="props.selected ? 'bg-orange-8 text-white' : 'text-orange-8'">
-                                                                <span class="text-h6 text-weight-bold">P {{props.row.price}}.00</span><span></span>
+                                                                <span class="text-weight-bold" style="font-size:15px">P {{props.row.price}}.00</span><span></span>
                                                                 
                                                                 <span class="" v-show="tab == 'FIXED'">for <span class="text-weight-bold">{{props.row.adultPax}}</span>
                                                                      
@@ -191,8 +184,8 @@
                                   <span class="q-mb-none q-mt-md text-h6 text-weight-light"> Select <span class="text-orange-8 text-h6">{{returnLimit(food.category)}}</span> Choice<span v-show="returnLimit(food.category) > 1">s</span> of {{food.category}}  </span>
                                   <br>
                                   <span class="text-caption" v-show="tab == 'CUSTOMIZE'">additional ₱{{food.price}} per choice of dish (in per pax price)</span>
-                                  <div class="row q-mt-md q-mb-md">
-                                        <q-card class="my-card col-4 q-ma-sm cursor-pointer" v-for="(choice,j) in food.foodChoices" :key="j" :style="returnSelectedStatus(choice) ? 'transform: scale(0.95);' : ''" :class="returnSelectedStatus(choice) ? 'bg-orange text-white' : ''" style="border-radius:20px;" @click.native="clickUnclick(choice),checkQty(choice,returnLimit(food.category),food.category)">
+                                  <div class="row justify-center q-mt-md q-mb-md">
+                                        <q-card class="my-card col-9 q-ma-sm cursor-pointer" v-for="(choice,j) in food.foodChoices" :key="j" :style="returnSelectedStatus(choice) ? 'transform: scale(0.95);' : ''" :class="returnSelectedStatus(choice) ? 'bg-orange text-white' : ''" style="border-radius:20px;" @click.native="clickUnclick(choice),checkQty(choice,returnLimit(food.category),food.category)">
                                         <q-img 
                                           :src="choice.foodPic"
                                           :ratio="3/2" />
@@ -229,7 +222,6 @@
                                 </span>
                             </div>
                             <div class="q-gutter-xs q-mt-sm">
-
                                   <q-select
                                       v-model="selectedServices"
                                       :options="mapServices"
@@ -238,7 +230,6 @@
                                       multiple=""
                                       label="Services (Multiple Selection)"
                                       color="orange-8"
-                                      class="q-pa-sm"
                                       outlined=""
                                       @input="checkInput('services')"
                                       menu-anchor="bottom center"
@@ -247,12 +238,11 @@
 
                                       <q-chip
                                           removable
-          
                                           @remove="scope.removeAtIndex(scope.index),checkIfRemovedServices(scope.opt.value)"
                                           :tabindex="scope.tabindex"
                                           color="orange-8"
                                           text-color="white"
-                                          size="1.2em"
+                                          size="0.9em"
                                           class="q-mt-sm"
                                       >
                                           {{ scope.opt.label }} 
@@ -263,12 +253,12 @@
                           </div>
                           <div class="q-pa-md q-mt-md bg-grey-3" v-show="selectedServices.length != 0">
                                 <div class="text-grey-8">
-                                  <span class="text-weight-bold"  style="font-size:1.2em;">
+                                  <div class="text-weight-bold text-center"  style="font-size:1.2em;">
                                   Enter Quantity
-                                  </span>
-                                      <div class="row" v-for="(i, index) in this.selectedServices" :key="index">
-                                          <span class="col-6 text-right q-pa-md q-mt-sm" style="font-size:1.1em;">{{i.services+' ('+ i.price +' Pesos)'}}</span>
-                                          <div class="col" style="max-width:200px"><q-input color="orange-8" outlined="" rounded="" class="q-ma-sm q-mr-lg text-h6" type="number" min="0" v-model="serviceQty[i.services]" placeholder="Qty" /></div>
+                                  </div>
+                                      <div class="column" v-for="(i, index) in this.selectedServices" :key="index">
+                                          <span class=" q-mt-sm" style="font-size:1.1em;">{{i.services+' ('+ i.price +' Pesos)'}}</span>
+                                          <div class="q-py-sm"><q-input dense color="orange-8" outlined="" rounded="" class="text-h6" type="number" min="0" v-model="serviceQty[i.services]" placeholder="Qty" /></div>
                                       </div>
                               </div>                          
                           </div>
@@ -299,7 +289,6 @@
                                       multiple=""
                                       label="Add-Ons (Multiple Selection)"
                                       color="orange-8"
-                                      class="q-pa-sm"
                                       outlined=""
                                       @input="checkInput('addons')"
                                       menu-anchor="bottom center"
@@ -313,7 +302,7 @@
                                           :tabindex="scope.tabindex"
                                           color="orange-8"
                                           text-color="white"
-                                          size="1.2em"
+                                          size="0.9em"
                                           class="q-mt-sm"
                                       >
                                           {{ scope.opt.label }}
@@ -324,12 +313,12 @@
                           </div>
                           <div class="q-pa-md q-mt-md bg-grey-3" v-show="selectedAddOns.length != 0">
                                 <div class="text-grey-8">
-                                  <span class="text-weight-bold"  style="font-size:1.2em;">
+                                  <div class="text-weight-bold text-center"  style="font-size:1.2em;">
                                   Enter Quantity
-                                  </span>
-                                      <div class="row" v-for="(i, index) in this.selectedAddOns" :key="index">
-                                          <span class="col-6 text-right q-pa-md q-mt-sm" style="font-size:1.1em;">{{i.addons+' ('+ i.price +' Pesos)'}}</span>
-                                          <div class="col" style="max-width:200px"><q-input color="orange-8" outlined="" rounded="" class="q-ma-sm q-mr-lg text-h6" type="number" min="0" v-model="addOnsQty[i.addons]" placeholder="Qty" /></div>
+                                  </div>
+                                      <div class="column" v-for="(i, index) in this.selectedAddOns" :key="index">
+                                          <span class="q-mt-sm" style="font-size:1.1em;">{{i.addons+' ('+ i.price +' Pesos)'}}</span>
+                                          <div class="q-pb-sm"><q-input dense color="orange-8" outlined="" rounded="" class="q-ma-sm q-mr-lg text-h6" type="number" min="0" v-model="addOnsQty[i.addons]" placeholder="Qty" /></div>
                                       </div>
                               </div>                          
                           </div> 
@@ -350,8 +339,8 @@
                             <span class="q-mb-none q-mt-md text-h6 text-weight-light"> Select Additional Choice of {{food.category}}</span>
                             <br>
                             <span class="text-caption">additional ₱{{food.price}} per choice of dish (in per pax price)</span>
-                            <div class="row q-mt-md q-mb-md">
-                                  <q-card class="my-card col-4 q-ma-sm cursor-pointer" v-for="(choice,j) in food.foodChoices" :key="j" :style="returnSelectedStatusAdd(choice) ? 'transform: scale(0.95);' : ''" :class="returnSelectedStatusAdd(choice) ? 'bg-orange text-white' : ''" style="border-radius:20px;" @click.native="clickUnclickAdd(choice)">
+                            <div class="row justify-center q-mt-md q-mb-md">
+                                  <q-card class="my-card col-10 q-ma-sm cursor-pointer" v-for="(choice,j) in food.foodChoices" :key="j" :style="returnSelectedStatusAdd(choice) ? 'transform: scale(0.95);' : ''" :class="returnSelectedStatusAdd(choice) ? 'bg-orange text-white' : ''" style="border-radius:20px;" @click.native="clickUnclickAdd(choice)">
                                   <q-img 
                                     :src="choice.foodPic"
                                     :ratio="3/2" />
@@ -399,25 +388,30 @@
                               <div v-if="paymentPermission == false">
                                 <span class="q-mb-none q-mt-md text-h6 text-weight-light"> Login First Before Proceeding to Payment</span>
                                 <br>
-                                <div class="row q-mt-md">
-                                  <q-btn  rounded color="orange-8" label="LOGIN VIA GOOGLE" @click="loginGoogle" />
-                                  <div class="q-ma-sm q-mx-lg">OR</div>
+                                <div class="column items-center q-mt-md">
+                                  <q-btn rounded color="orange-8" style="width:250px" label="LOGIN VIA GOOGLE" @click="loginGoogle" />
+                                  <div class="q-pa-sm">OR</div>
                                   <q-btn  rounded color="grey-10" label="LOGIN VIA EMAIL AND PASSWORD"/>
                                 </div>
                               </div>
+
                               <div v-else>
                                 <span class="q-mb-none q-mt-md text-h6 text-weight-light"> Select Payment Terms</span>
-                                <div class="row q-mt-lg">
+                                <div class="column q-mt-lg">
                                   <q-select v-model="paymentTerms" :options="payOptions" color="orange-8" outlined="" rounded="" class="col"/>
-                                  <div class="col-3 text-orange-8 q-ml-md text-h6">
+                                  <div class="text-orange-8 text-center text-h6">
                                     <div>₱ {{returnPaymentAmount}}</div>
                                     <div class="text-caption">To Pay Amount</div>
                                   </div>
                                 </div>
-                                <div class="row q-mt-lg q-pa-md bg-grey-2">
-                                   <stripe-elements ref="elementsRef" color="orange-8" :pk="publishableKey" :amount="returnPaymentAmount" @token="tokenCreated" @loading="loading = $event" outline class="col-8 q-mr-md">
+                                <div class="column q-mt-lg bg-grey-2">
+                                   <div class="q-py-md">
+                                   <stripe-elements ref="elementsRef" color="orange-8" :pk="publishableKey" :amount="returnPaymentAmount" @token="tokenCreated" @loading="loading = $event" outline>
                                     </stripe-elements>
-                                    <q-btn outlined color="grey-10" class="col" size="md" rounded @click="submit" icon="payment"><b>&nbsp;&nbsp;PAY ₱ {{returnPaymentAmount}}</b></q-btn>
+                                    </div>
+                                    <div class="q-pb-md">
+                                        <q-btn outlined color="grey-10" class="full-width" rounded @click="submit" icon="payment"><b>&nbsp;&nbsp;PAY ₱ {{returnPaymentAmount}}</b></q-btn>
+                                    </div>
                                 </div>
                                 
                               </div>
@@ -427,24 +421,22 @@
                           </q-step>                                   
                         </q-stepper>
                     
-                    </q-card-section>
                     </q-card>
 
             </div>
 <!-- END OF LEFT PART -->
 
 <!-- RIGHT PART -->
-          <q-page-sticky position="top-right" :offset="[18, 18]" class="col-4 q-pl-md">
-            <div class="col-4 q-pl-md">
+            <q-dialog v-model="right">
                 <q-card class="my-card shadow-0" style="border-radius:20px;">
                     <q-card-section>
                        
                         <div class="column items-center q-pa-sm">
-                          <span class="text-h6 q-mx-md">RESERVATION#: {{$route.params.id}}</span>
+                          <span class="text-weight-bold" style="font-size:18px">RESERVATION#: {{$route.params.id}}</span>
                         </div>
   
                         <div v-show="details1">  
-                          <q-scroll-area style="width: 100%; height: 70vh;" class="q-px-md" :visible="true">                         
+                          <q-scroll-area style="width: 100%; height: 70vh;" :visible="true">                         
                           <div class="text-center q-mt-sm text-overline">RESERVATION DETAILS</div>                 
                           <div class="q-pa-sm row justify-between">
                               <div>Date</div>
@@ -488,8 +480,9 @@
                           </div>
                           </q-scroll-area> 
                         </div>
+
                         <div v-show="details2">  
-                        <q-scroll-area style="width: 100%; height: 70vh;" class="q-px-md" :visible="true">                         
+                        <q-scroll-area style="width: 100%; height: 70vh;" :visible="true">                         
                           <div class="text-center q-mt-sm text-overline">FOOD CHOICES</div>
                           <div class="text-subtitle text-orange-8 text-center q-mt-md" v-show="choiceOfFood.length == 0">NO FOOD SELECTED YET</div>                 
                           <div class="q-pa-sm row justify-between" v-for="(choice,i) in choiceOfFood" :key="i" >
@@ -515,8 +508,9 @@
                           </div>
                         </q-scroll-area>
                         </div>
+
                         <div v-show="details3">  
-                        <q-scroll-area style="width: 100%; height: 70vh;" class="q-px-md" :visible="true">                         
+                        <q-scroll-area style="width: 100%; height: 70vh;" :visible="true">                         
                           <div class="text-center q-mt-sm text-overline">SERVICES</div>
                           <div class="text-subtitle text-orange-8 text-center q-mt-md" v-show="selectedServices.length == 0">NO SELECTED SERVICES</div>                 
                           <div class="q-pa-sm row justify-between" v-for="(choice,i) in selectedServices" :key="i" >
@@ -562,8 +556,9 @@
                           </div> 
                         </q-scroll-area>
                         </div>
+
                         <div v-show="details4">  
-                        <q-scroll-area style="width: 100%; height: 70vh;" class="q-px-md" :visible="true">                         
+                        <q-scroll-area style="width: 100%; height: 70vh;" :visible="true">                         
                           <div class="text-center q-mt-sm text-overline">ADDITIONAL FOOD CHOICES</div>
                           <div class="text-subtitle text-orange-8 text-center q-mt-md" v-show="choiceOfFoodAdd.length == 0">NO ADDITIONAL FOOD SELECTED YET
 
@@ -598,8 +593,9 @@
                           </div> 
                         </q-scroll-area>
                         </div>
+
                         <div v-show="details5">  
-                          <q-scroll-area style="width: 100%; height: 70vh;" class="q-px-md" :visible="true">                         
+                          <q-scroll-area style="width: 100%; height: 70vh;" :visible="true">                         
                           <div class="text-center q-mt-sm text-overline">BILLING STATEMENT</div>                 
                           <div class="q-pa-sm row justify-between">
                               <div>Date</div>
@@ -708,11 +704,17 @@
                         </div> 
                     </q-card-section>
                  </q-card>
-            </div> 
-          </q-page-sticky>   
+                </q-dialog>  
 <!-- END OF RIGHT PART -->
 
-        </div>
+        <q-page-sticky position="bottom-right" :offset="[18, 18]">
+            <q-btn dense round color="orange-7" icon="list_alt" size="lg" @click="right = true" class="wow">
+              <q-tooltip anchor="top left">
+                Show Reservation Details
+              </q-tooltip>
+            </q-btn>
+        </q-page-sticky>
+
     </q-page>
 </template>
 <style>
@@ -745,6 +747,7 @@ export default {
       selectedTheme:[],
       tab: 'PER PAX',   
       step: 1,
+      right: false,
       fname: '',
       lname: '',
       pax: 50, 
@@ -773,7 +776,7 @@ export default {
      selectedAddOns: [],
      addOnsQty: [],
      Addons:[],
-     Reserved:[],
+     Reserved: [],
      details1: true,
      details2: false,
      details3: false,

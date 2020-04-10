@@ -72,7 +72,10 @@ module.exports = function (ctx) {
         'QDate',
         'QInput',
         'QSelect',
-        'QPageSticky'
+        'QPageSticky',
+        'QFab',
+        'QFabAction',
+        'QTooltip'
       ],
       directives: [
         'ClosePopup'
