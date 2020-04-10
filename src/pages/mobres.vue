@@ -6,7 +6,7 @@
                 <q-card class="my-card shadow-0 q-pt-md" style="border-radius:20px;">      
                         <div class="column q-px-md q-gutter-sm" style="font-size:30px;font-family: 'Montserrat', sans-serif;">
                             <q-input dense v-model="reservation.clientEvent" type="text" label="Event Name" outlined color="orange-8" rounded/>
-                            <q-select dense v-model="reservation.clientEventType" :options="mapEvent" emit-value label="Event Type" outlined color="orange-8 " rounded :disable="step > 3" @input="selectedPackage = []"/>
+                            <q-select dense v-model="reservation.clientEventType" :options="mapEvent" emit-value label="Event Type" outlined color="orange-8 " rounded :disable="step > 1" @input="selectedPackage = []"/>
                         </div>
                         <q-stepper
                             v-model="step"
@@ -24,7 +24,7 @@
                             >
                             <div class="column">
                                 <div>
-                                    <q-date v-model="reservedate" color="orange-4" :options="date => dateToday(date)"/>
+                                    <q-date v-model="reservedate" color="orange-4" :options="date => dateToday(date)" :events="returnWithEvents"/>
                                 </div>
                                 <div class="q-gutter-md q-pt-md">
                                     <div>
@@ -707,8 +707,12 @@
                 </q-dialog>  
 <!-- END OF RIGHT PART -->
 
-        <q-page-sticky position="top-right" :offset="[13, 50]">
-            <q-btn dense flat round color="orange-7" icon="help" size="lg" @click="right = true" />
+        <q-page-sticky position="bottom-right" :offset="[18, 18]">
+            <q-btn dense round color="orange-7" icon="list_alt" size="lg" @click="right = true" class="wow">
+              <q-tooltip anchor="top left">
+                Show Reservation Details
+              </q-tooltip>
+            </q-btn>
         </q-page-sticky>
 
     </q-page>
@@ -772,6 +776,7 @@ export default {
      selectedAddOns: [],
      addOnsQty: [],
      Addons:[],
+     Reserved: [],
      details1: true,
      details2: false,
      details3: false,
@@ -835,6 +840,10 @@ export default {
       this.$binding('Addons', this.$firestoreApp.collection('Addons'))
       .then(Addons => {
       console.log(Addons, 'Addons')
+      }),
+      this.$binding('Reserved', this.$firestoreApp.collection('Reservation'))
+      .then(Reserved => {
+      console.log(Reserved, 'Reserved')
       })
   },
   computed:{
@@ -1192,10 +1201,40 @@ export default {
     },
     dateToday(dates){
         // console.log('dates',dates)
+        let eventToConsider = this.reservation.clientEventType
+        let baseCount = eventToConsider == 'Debut' || eventToConsider == 'Wedding' ? 2 : 1
+        // console.log(baseCount,'baseCount')
+
         let today = new Date()
         let format = date.formatDate(today,'YYYY/MM/DD')
         if(format < dates){
-            return true
+            let eventsBase = []
+            let length = 0
+
+            let filter = this.Reserved.forEach(a=>{
+              if(date.formatDate(dates,'YYYY-MM-DD') == date.formatDate(a.clientReserveDate,'YYYY-MM-DD')){
+                eventsBase.push(a)
+              }
+            })
+            // console.log('dates',dates)
+            // console.log(eventsBase,'eventBase')
+
+            eventsBase.forEach(b=>{
+              let count = b.clientEventType == 'Debut' || b.clientEventType == 'Wedding' ? 2 : 1
+              length = length + count
+            })
+
+            // console.log(length,'reservedCount')
+
+            let check = length + baseCount
+            
+            if(check <= 4){
+              console.log(check,dates)
+              return true
+            } else {
+              console.log('BLOCKED',dates)
+              return false
+            }
         }
     },
     returnLimit(viand){
@@ -1432,6 +1471,7 @@ export default {
         clientPlace: this.place,
         clientCity: this.city,
         clientEvent: this.reservation.clientEvent,
+        clientEventType: this.reservation.clientEventType,
         clientMotif: this.motif,
         clientPax: this.returnTotalNumberPax,
         clientPaxDetails: this.tab === 'FIXED' ? this.returnPaxFixed : 'NONE',
@@ -1535,6 +1575,22 @@ export default {
         });
                   
     },
+    returnWithEvents(dates){
+      let eventsBase = []
+      let length = 0
+
+      let filter = this.Reserved.forEach(a=>{
+        if(date.formatDate(dates,'YYYY-MM-DD') == date.formatDate(a.clientReserveDate,'YYYY-MM-DD')){
+          eventsBase.push(a)
+        }
+      })
+
+      if(eventsBase.length > 0){
+        return true
+      } else {
+        return false
+      }
+    }
   }
 }
 </script>
