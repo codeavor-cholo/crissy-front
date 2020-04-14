@@ -17,6 +17,7 @@ const routes = [
        { path: '/mobres/:id', component: () => import('pages/mobres.vue') },
        { path: '/menu', component: () => import('pages/menu.vue') },
        { path: '/profile', component: () => import('pages/profile.vue') },
+       { path: '/notification', component: () => import('pages/notification.vue') },
     ]
   }
 ]

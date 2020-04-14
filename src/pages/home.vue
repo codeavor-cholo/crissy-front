@@ -33,6 +33,9 @@
           </div>
 
           <div class="row items-center q-gutter-md" style="padding-right:30px;padding-left:260px">
+          <div>
+              <q-btn dense flat style="font-size: 1.3em;" round icon="notifications" text-color="orange-4" color="white" @click="$router.push('/notification')"/>
+          </div>  
           <q-btn-dropdown dense  v-show="!show" text-color="orange-8" :label="displayName" flat="">
             <q-list>
               <q-item clickable v-close-popup @click="$router.push('/profile')">
@@ -71,13 +74,17 @@
         <img style="height:100%;width:60px" src="statics/pics/logo.png">
                  <q-space />
                  <q-space />
-          <q-input dense standout style="width:200px" v-model="search">
+          <q-input dense standout style="width:180px" v-model="search">
             <template v-slot:append>
               <q-icon name="search" color="orange" />
             </template>
           </q-input>
           
-          <q-btn flat text-color="orange-7" style="font-size: 1.3em;" icon="account_circle" v-show="show" @click="loginmob = true"/>
+          <div>
+              <q-btn dense flat style="font-size: 1.3em;" round icon="notifications" text-color="orange-4" color="white" @click="$router.push('/notification')"/>
+          </div> 
+
+          <q-btn flat dense text-color="orange-7" style="font-size: 1.3em;" icon="account_circle" v-show="show" @click="loginmob = true"/>
           
           <q-btn-dropdown dense style="font-size: 1.3em;" icon="account_circle" v-show="!show" text-color="orange-8" flat="">
             <q-list>
