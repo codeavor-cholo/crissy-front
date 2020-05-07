@@ -1,6 +1,20 @@
 <template>
   <q-layout view="hHh lpR fff">
 
+    <div class="fixed-center mobile-only" v-show="splashscreen">
+      <div class="q-pa-sm" >
+          <img class="col" style="width:250px;height:100%" src="statics/pics/logo.png">
+      </div>
+
+      <div class="row justify-center">
+      <q-spinner-pie
+        color="orange-7"
+        size="5em"
+      />
+      <q-tooltip :offset="[0, 8]">QSpinnerPie</q-tooltip>
+      </div>
+    </div>
+
 <!-- START OF DESKTOP HEADER -->
     <div class="desktop-only">
     <q-header class="bg-grey-11 text-white row items-center" style="height:63px">
@@ -19,6 +33,9 @@
           </div>
 
           <div class="row items-center q-gutter-md" style="padding-right:30px;padding-left:260px">
+          <div>
+              <q-btn dense flat style="font-size: 1.3em;" round icon="notifications" text-color="orange-4" color="white" @click="$router.push('/notification')"/>
+          </div>  
           <q-btn-dropdown dense  v-show="!show" text-color="orange-8" :label="displayName" flat="">
             <q-list>
               <q-item clickable v-close-popup @click="$router.push('/profile')">
@@ -51,19 +68,23 @@
 <!-- END OF DESKTOP HEADER -->
 
 <!-- START OF MOBILE HEADER -->
-    <div class="mobile-only">
+    <div class="mobile-only" v-show="!splashscreen">
     <q-header class="bg-grey-11 text-white">
       <q-toolbar class="q-py-sm">                
         <img style="height:100%;width:60px" src="statics/pics/logo.png">
                  <q-space />
                  <q-space />
-          <q-input dense standout style="width:200px" v-model="search">
+          <q-input dense standout style="width:180px" v-model="search">
             <template v-slot:append>
               <q-icon name="search" color="orange" />
             </template>
           </q-input>
           
-          <q-btn flat text-color="orange-7" style="font-size: 1.3em;" icon="account_circle" v-show="show" @click="loginmob = true"/>
+          <div>
+              <q-btn dense flat style="font-size: 1.3em;" round icon="notifications" text-color="orange-4" color="white" @click="$router.push('/notification')"/>
+          </div> 
+
+          <q-btn flat dense text-color="orange-7" style="font-size: 1.3em;" icon="account_circle" v-show="show" @click="loginmob = true"/>
           
           <q-btn-dropdown dense style="font-size: 1.3em;" icon="account_circle" v-show="!show" text-color="orange-8" flat="">
             <q-list>
@@ -108,7 +129,7 @@
 <!-- END OF DESKTOP PAGE -->
 
 <!-- START OF MOBILE PAGE -->
-    <div class="mobile-only">
+    <div class="mobile-only" v-show="!splashscreen">
     <q-page-container>
       <router-view style="padding-bottom:50px" />
     </q-page-container>
@@ -139,7 +160,7 @@
 <!-- END OF DESKTOP FOOTER -->
 
 <!-- START OF MOBILE FOOTER -->
-    <div class="mobile-only">
+    <div class="mobile-only" v-show="!splashscreen">
     <q-footer class="bg-black text-white">
       <q-toolbar>
         <q-toolbar-title>
@@ -195,7 +216,7 @@
 <!-- END OF LOGIN DIALOG DESKTOP -->
 
 <!-- START OF LOGIN DIALOG MOBILE -->
-    <div class="mobile-only">
+    <div class="mobile-only" v-show="!splashscreen">
     <q-dialog v-model="loginmob">
       <q-card>
         <q-card-section>
@@ -233,6 +254,7 @@ export default {
     return {
       tab: 'ho',
       login: false,
+      splashscreen: true,
       loginmob: false,
       clientEmail: '',
       clientPassword: '',
@@ -242,6 +264,11 @@ export default {
     }
   },
   created() {
+          setTimeout(() => {
+          this.splashscreen=false;
+          // console.log('sdf')
+          }, 7000)
+
           let self = this
           this.$firebase.auth().onAuthStateChanged(function(user) {
               
