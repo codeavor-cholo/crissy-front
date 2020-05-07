@@ -1145,7 +1145,7 @@ export default {
       returnTotalNumberPax(){
         try {
           let selected = this.selectedPackage[0]
-          if(selected.type == 'FIXED'){
+          if(this.tab == 'FIXED'){
             if(selected.withKid){
               return parseInt(selected.adultPax) + parseInt(selected.kidPax)
             } else {
@@ -1501,9 +1501,11 @@ export default {
             clientTokenID: this.token.id,
             clientPaymentType: 'CARD',
             clientUID: this.clientUID,
+            transactionType: 'ONLINE',
             clientEmail: this.clientEmail,
             clientPaymentDate: date.formatDate(new Date(), 'YYYY-MM-DD')
         }
+        console.log(paymentDetails, 'detailspayment')
             this.$firestoreApp.collection('Payments').add(paymentDetails)
             .then(()=>{
                 this.$q.notify({
