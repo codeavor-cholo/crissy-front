@@ -18,8 +18,11 @@ const routes = [
        { path: '/menu', component: () => import('pages/menu.vue') },
        { path: '/profile', component: () => import('pages/profile.vue') },
        { path: '/notification', component: () => import('pages/notification.vue') },
+       { path: '/gallery', component: () => import('pages/gallery.vue') },
+       { path: '/profilemob', component: () => import('pages/profilemob.vue') },
     ]
-  }
+  },
+  { path: '/loginmob', component: () => import('pages/loginmob.vue') },
 ]
 
 // Always leave this as last one
