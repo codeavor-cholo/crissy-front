@@ -19,7 +19,9 @@
 
           <div class="row items-center q-gutter-md" style="padding-right:30px;padding-left:260px">
           <div>
-              <q-btn dense flat style="font-size: 1.3em;" round icon="notifications" text-color="orange-4" color="white" @click="$router.push('/notification')"/>
+              <q-btn dense flat style="font-size: 1.3em;" round icon="notifications" text-color="orange-4" color="white" @click="$router.push('/notification')">
+                <q-badge color="black" text-color="white" :label="returnLengthForToday" floating v-show="returnLengthForToday !=0"/>
+              </q-btn>
           </div>  
           <q-btn-dropdown dense  v-show="!show" text-color="orange-8" :label="displayName" flat="">
             <q-list>
@@ -66,7 +68,9 @@
           </q-input>
           
           <div>
-              <q-btn dense flat style="font-size: 1.3em;" round icon="notifications" text-color="orange-4" color="white" @click="$router.push('/notification')"/>
+              <q-btn dense flat style="font-size: 1.3em;" round icon="notifications" text-color="orange-4" color="white" @click="$router.push('/notification')">
+                <q-badge color="black" text-color="white" :label="returnLengthForToday" floating v-show="returnLengthForToday !=0"/>
+              </q-btn>
           </div> 
 
           <q-btn flat dense text-color="orange-7" style="font-size: 1.3em;" icon="account_circle" v-show="show" @click="loginmob = true"/>
@@ -225,8 +229,26 @@ export default {
       clientPassword: '',
       search: '',
       show: true,
-      displayName: ''
+      displayName: '',
+      ClientNotifications: [],
+      Reservation: [],
+      AdminNotifications: []
+
     }
+  },
+  mounted(){
+      this.$binding('ClientNotifications', this.$firestoreApp.collection('ClientNotifications'))
+      .then(ClientNotifications => {
+      console.log(ClientNotifications, 'ClientNotifications')
+      }),
+      this.$binding('Reservation', this.$firestoreApp.collection('Reservation'))
+      .then(Reservation => {
+      console.log(Reservation, 'Reservation')
+      }),
+      this.$binding('AdminNotifications', this.$firestoreApp.collection('AdminNotifications'))
+      .then(AdminNotifications => {
+      console.log(AdminNotifications, 'AdminNotifications')
+      })
   },
   created() {
           let self = this
@@ -241,11 +263,92 @@ export default {
                 self.displayName = gg.displayName
                 
               } else {
-                self.show = true
+                                //if mobile screen $q.screen.lt.sm
+                if(self.$q.platform.is.cordova){
+                  self.$router.push('/login')
+                } else {
+                  self.$router.push('/')
+                  self.show = true
+                }
               }
           })
   },
+  computed:{
+        returnWithUserUID(){
+            try {
+                let user = this.$firebase.auth().currentUser
+                console.log(user,'user')
+                let reserve = this.Reservation.filter(a=>{
+                    a.typeOf = 'reserve'
+                    return a.clientUID == user.uid
+                })
+
+
+                let keys = this.$lodash.map(reserve,a=>{
+                    return {
+                        key: a['.key'],
+                        data: a,
+                        typeOf: a.typeOf
+                    }
+                })
+                
+                console.log('keys',keys)
+                console.log(this.ClientNotifications,'ClientNotifications')
+
+                let myNotifs = []
+                this.ClientNotifications.forEach(b=>{
+                    let status = b.status
+                    let data = this.getDataOfReservations(keys,b.reservationKey)
+                    console.log(status,'status')
+                    let notif = {...data.data}
+                    notif.dateTime = b.dateTime
+                    notif.notifStatus = status
+                    console.log(notif,'notif')
+                    myNotifs.push(notif)
+                })
+    
+                let join = myNotifs.concat(this.getPaymentNotifs)
+                console.log(this.$lodash.orderBy(join,'dateTime','desc'),'ordersss')
+
+                return this.$lodash.orderBy(join,'dateTime','desc')
+            } catch (error) {
+                return []
+            }
+        },
+        getPaymentNotifs(){
+            try {
+                let user = this.$firebase.auth().currentUser
+
+                let filter = this.AdminNotifications.filter(a=>{
+                    a.typeOf = 'payment'
+                    return a.userID == user.uid && a.message == "Payment Recieved!"
+                })
+
+                return filter
+            } catch (error) {
+                return []
+            }
+        },
+        returnLengthForToday(){
+            try {
+                return this.returnWithUserUID.filter(a=>{
+                    return date.formatDate(a.dateTime,'MM-DD-YYYY') == date.formatDate(new Date(),'MM-DD-YYYY')
+                })
+            } catch (error) {
+                return 0
+            }
+        }
+  },
   methods:{
+        getDataOfReservations(array,key){
+            try {
+                return this.$lodash.filter(array,a=>{
+                        return key == a.key
+                    })[0]
+            } catch (error) {
+                return null
+            }
+        },
         loginGoogle(){
         var provider = new this.$firebase.auth.GoogleAuthProvider();
         this.$firebase.auth().signInWithPopup(provider)

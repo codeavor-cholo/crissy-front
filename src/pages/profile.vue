@@ -24,13 +24,13 @@
                         </div>
                         <div class="row">
                         
-                        <q-img style="height:100%;width:280px" src="statics/pics/foo.jpeg" />
+                        <q-img style="height:100%;width:280px" :src="userDetails.photoURL" />
                         
 
                         <div class="column justify-center q-px-xl q-pt-lg q-gutter-md">
-                        <div class="q-pl-xl" style="font-size:25px;font-family: 'Montserrat', sans-serif;">Name: Codeavor</div>
-                        <div class="q-pl-xl" style="font-size:25px;font-family: 'Montserrat', sans-serif;">Contact Number: 0999-999-9999</div>
-                        <div class="q-pl-xl" style="font-size:25px;font-family: 'Montserrat', sans-serif;">Address: Tondo, Manila</div>
+                        <div class="q-pl-xl" style="font-size:25px;font-family: 'Montserrat', sans-serif;">Name: {{userDetails.displayName}}</div>
+                        <div class="q-pl-xl" style="font-size:25px;font-family: 'Montserrat', sans-serif;">Contact Number: {{userDetails.phoneNumber}} <q-btn color="orange-8" icon="add" label="add" rounded class="q-ml-md" v-show="userDetails.phoneNumber == null" /></div>
+                        <div class="q-pl-xl" style="font-size:25px;font-family: 'Montserrat', sans-serif;">Email Address: {{userDetails.email}}</div>
                         </div>
                         
                         </div>
@@ -460,7 +460,8 @@ export default {
                 { name: 'clientFName', required: true, label: 'First Name', align: 'center', field: 'clientFName', sortable: true },
                 { name: 'clientLName', align: 'center', label: 'Last Name', field: 'clientLName', sortable: true },
             ],
-      displayName: ''
+      displayName: '',
+      userDetails: {}
     }
   },
   created() {
@@ -474,6 +475,7 @@ export default {
           console.log('user',gg.displayName)
           self.uid = gg.uid
           self.displayName = gg.displayName
+          self.userDetails = gg
         }
     })
   },

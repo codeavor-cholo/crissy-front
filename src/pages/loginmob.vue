@@ -98,7 +98,7 @@ export default {
                 console.log('user',gg.displayName)
                 self.show = false
                 self.displayName = gg.displayName
-                
+                self.$router.push('/')               
               } else {
                 self.show = true
               }

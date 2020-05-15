@@ -104,13 +104,19 @@
                                 <q-tabs
                                     v-model="tab"
                                     class="text-orange-8 bg-grey-2"
+                                    vertical
+                                    active-color="white"
+                                    active-bg-color="orange-8"
                                     align="justify"
                                 >
+                                    <div class="text-grey-8 q-mb-md text-h6"><q-icon name="touch_app" /> Select type of Package :</div>
                                     <q-tab name="PER PAX" label="PER PAX PACKAGES" @click="selectedPackage = []" />
                                     <q-tab name="FIXED" label="FIXED PAX PACKAGES" @click="selectedPackage = []"/>
                                     <q-tab name="CUSTOMIZE" label="CUSTOMIZE PACKAGE" @click="selectedPackage = []"/>
                                 </q-tabs>
-                                <q-separator  />
+
+                               
+                                <q-separator  inset spaced/>
                                 <div v-show="tab !== 'CUSTOMIZE'">
                                         <h6 class="q-my-sm text-weight-light full-width text-center" style="font-size:1.2em;">Click the card to select package.</h6>
                                         <q-table grid :data="tab == 'PER PAX' ? returnPerPax : returnFixed" :columns="columns" :filter="filter" class="full-width align-center " :selected.sync="selectedPackage" row-key=".key" selection="single" :pagination.sync="pagination">
