@@ -1,20 +1,5 @@
 <template>
   <q-layout view="hHh lpR fff">
-
-    <div class="fixed-center mobile-only" v-show="splashscreen">
-      <div class="q-pa-sm" >
-          <img class="col" style="width:250px;height:100%" src="statics/pics/logo.png">
-      </div>
-
-      <div class="row justify-center">
-      <q-spinner-pie
-        color="orange-7"
-        size="5em"
-      />
-      <q-tooltip :offset="[0, 8]">QSpinnerPie</q-tooltip>
-      </div>
-    </div>
-
 <!-- START OF DESKTOP HEADER -->
     <div class="desktop-only">
     <q-header class="bg-grey-11 text-white row items-center" style="height:63px">
@@ -27,7 +12,7 @@
             <q-tabs v-model="tab">
             <q-route-tab name="ho"  to="/" ><b>Home</b></q-route-tab>
             <q-route-tab name="men" to="/menu"><b>Menu</b></q-route-tab>
-            <q-route-tab name="gal" to="/"><b>Gallery</b></q-route-tab>
+            <q-route-tab name="gal" to="/gallery"><b>Gallery</b></q-route-tab>
             <q-route-tab name="pac" to="/packages"><b>Packages</b></q-route-tab>
             </q-tabs>
           </div>
@@ -68,7 +53,7 @@
 <!-- END OF DESKTOP HEADER -->
 
 <!-- START OF MOBILE HEADER -->
-    <div class="mobile-only" v-show="!splashscreen">
+    <div class="mobile-only">
     <q-header class="bg-grey-11 text-white">
       <q-toolbar class="q-py-sm">                
         <img style="height:100%;width:60px" src="statics/pics/logo.png">
@@ -86,33 +71,14 @@
 
           <q-btn flat dense text-color="orange-7" style="font-size: 1.3em;" icon="account_circle" v-show="show" @click="loginmob = true"/>
           
-          <q-btn-dropdown dense style="font-size: 1.3em;" icon="account_circle" v-show="!show" text-color="orange-8" flat="">
-            <q-list>
-              <q-item>
-                <q-item-section>
-                  <q-item-label :label="displayName"></q-item-label>
-                </q-item-section>
-              </q-item>
-              <q-item clickable v-close-popup @click="$router.push('/profile')">
-                <q-item-section>
-                  <q-item-label>My Account</q-item-label>
-                </q-item-section>
-              </q-item>
-              <q-item clickable v-close-popup @click="tempLogout">
-                <q-item-section>
-                  <q-item-label>Log Out</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-btn-dropdown>
-          
+          <q-btn dense style="font-size: 1.3em;" icon="account_circle" v-show="!show" @click="$router.push('/profilemob')" text-color="orange-8" flat="" />          
       </q-toolbar>
 
       <div class="bg-grey-3  text-orange-4">
             <q-tabs v-model="tab">
             <q-route-tab name="ho"  to="/" ><b>Home</b></q-route-tab>
             <q-route-tab name="men" to="/menu"><b>Menu</b></q-route-tab>
-            <q-route-tab name="gal" to="/"><b>Gallery</b></q-route-tab>
+            <q-route-tab name="gal" to="/gallery"><b>Gallery</b></q-route-tab>
             <q-route-tab name="pac" to="/packages"><b>Packages</b></q-route-tab>
             </q-tabs>
       </div>
@@ -123,13 +89,13 @@
 <!-- START OF DESKTOP PAGE -->
     <div class="desktop-only">
     <q-page-container>
-      <router-view style="padding-left:100px;padding-right:100px;padding-top:50px;padding-bottom:50px" />
+      <router-view style="padding-left:100px;padding-right:100px;padding-top:50px;padding-bottom:130px" />
     </q-page-container>
     </div>
 <!-- END OF DESKTOP PAGE -->
 
 <!-- START OF MOBILE PAGE -->
-    <div class="mobile-only" v-show="!splashscreen">
+    <div class="mobile-only">
     <q-page-container>
       <router-view style="padding-bottom:50px" />
     </q-page-container>
@@ -160,7 +126,7 @@
 <!-- END OF DESKTOP FOOTER -->
 
 <!-- START OF MOBILE FOOTER -->
-    <div class="mobile-only" v-show="!splashscreen">
+    <div class="mobile-only">
     <q-footer class="bg-black text-white">
       <q-toolbar>
         <q-toolbar-title>
@@ -216,7 +182,7 @@
 <!-- END OF LOGIN DIALOG DESKTOP -->
 
 <!-- START OF LOGIN DIALOG MOBILE -->
-    <div class="mobile-only" v-show="!splashscreen">
+    <div class="mobile-only">
     <q-dialog v-model="loginmob">
       <q-card>
         <q-card-section>
@@ -254,7 +220,6 @@ export default {
     return {
       tab: 'ho',
       login: false,
-      splashscreen: true,
       loginmob: false,
       clientEmail: '',
       clientPassword: '',
@@ -264,11 +229,6 @@ export default {
     }
   },
   created() {
-          setTimeout(() => {
-          this.splashscreen=false;
-          // console.log('sdf')
-          }, 7000)
-
           let self = this
           this.$firebase.auth().onAuthStateChanged(function(user) {
               

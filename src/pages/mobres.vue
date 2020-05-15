@@ -1516,7 +1516,7 @@ export default {
                   textColor: 'white',
                   position: 'bottom'
                 })
-                this.$router.push('/profile')
+                this.$router.push('/profilemob')
             })
         })
     },

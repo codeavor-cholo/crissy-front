@@ -1,36 +1,34 @@
 <template>
     <q-page>
-        <div class="q-pa-sm q-pt-xl">
-        <q-splitter v-model="splitterModel" >
-            <template v-slot:before>
+        <div>
+        
                 <div>
-                <q-tabs v-model="tab" vertical inline-label class="text-orange-4 full-height relative-position" >
+                <q-tabs v-model="tab" indicator-color="transparent" active-color="orange-4" class="text-grey full-height relative-position" >
                 <q-tab name="account" label="Account Details" />
                 <q-tab name="reserve" label="Reservation Details" />
                 <q-tab name="cancel" label="Cancelled Details" />
+                <q-tab name="out" label="Logout" @click="tempLogout" />
                 </q-tabs>
                 </div>
-            </template>
-
-            <template v-slot:after>
+           
                 <q-tab-panels v-model="tab" animated class="transparent" transition-prev="jump-up" transition-next="jump-up" >
 <!-- ACCOUNT AREA -->
                 <q-tab-panel name="account">
-                    <div style="font-size:50px;font-family: 'Montserrat', sans-serif;" class="q-pl-md">Account Details</div>
+                    <div style="font-size:30px;font-family: 'Montserrat', sans-serif;" class="q-pl-sm q-pb-sm">Account Details</div>
                     <q-card class="my-card">
                     <q-card-section>
-                        <div class="row justify-end">
+                        <div class="text-right q-pb-sm">
                         <q-btn flat text-color="orange-7" label="Edit Profile" icon="settings" />
                         </div>
-                        <div class="row">
                         
-                        <q-img style="height:100%;width:280px" src="statics/pics/foo.jpeg" />
+                        <div>
                         
-
-                        <div class="column justify-center q-px-xl q-pt-lg q-gutter-md">
-                        <div class="q-pl-xl" style="font-size:25px;font-family: 'Montserrat', sans-serif;">Name: Codeavor</div>
-                        <div class="q-pl-xl" style="font-size:25px;font-family: 'Montserrat', sans-serif;">Contact Number: 0999-999-9999</div>
-                        <div class="q-pl-xl" style="font-size:25px;font-family: 'Montserrat', sans-serif;">Address: Tondo, Manila</div>
+                        <q-img style="height:100%;width:300px" src="statics/pics/foo.jpeg" />
+                        
+                        <div class="column justify-center q-pt-lg q-gutter-md">
+                        <div class="q-pl-sm" style="font-family: 'Montserrat', sans-serif;">Name: Codeavor</div>
+                        <div class="q-pl-sm" style="font-family: 'Montserrat', sans-serif;">Contact Number: 0999-999-9999</div>
+                        <div class="q-pl-sm" style="font-family: 'Montserrat', sans-serif;">Address: Tondo, Manila</div>
                         </div>
                         
                         </div>
@@ -40,16 +38,16 @@
 <!-- END OF ACCOUNT AREA -->
 <!-- RESERVATION AREA -->
                 <q-tab-panel name="reserve">
-                    <div class="row justify-between">
-                        <div style="font-size:50px;font-family: 'Montserrat', sans-serif;" class="q-pl-md">Reservation</div>
-                        <q-input filled v-model="search_reserve" style="width:400px" label="Search">
+                    <div>
+                        <div style="font-size:30px;font-family: 'Montserrat', sans-serif;" class="q-pl-sm">Reservation</div>
+                        <q-input dense filled v-model="search_reserve" label="Search">
                                 <template v-slot:prepend>
                                 <q-icon name="search" color="orange"/>
                                 </template>
                         </q-input>
                     </div>
 
-                    <div class="q-pt-lg">
+                    <div class="q-pt-sm">
                     <q-tabs v-model="reservationtab" dense class="text-grey" active-color="orange-4" indicator-color="orange-4" align="justify" narrow-indicator >
                         <q-tab name="pending_res" label="Pending" />
                         <q-tab name="complete_res" label="Completed" />
@@ -62,35 +60,32 @@
                             <div class="row q-gutter-md">
                               <q-table grid :data="returnClientReservations" :filter="search_reserve" :columns="columnss" :rows-per-page-options="[0]" hide-bottom :pagination.sync="paginations" row-key=".key">
                                 <template v-slot:item="props">
-                                <div class="q-pa-sm">
-                                    <q-card style="width: 400px" class="my-card rounded-borders">
+                                <div>
+                                    <q-card class="my-card rounded-borders" style="width:300px">
                                         <q-card-section>
                                                 <div class="column items-center">
                                                 <img style="height:100%;width:100px" src="statics/pics/logo.png">
                                                 </div>
-                                                <div class="column items-center" style="font-size:35px;font-family: 'Lobster', cursive; "><b>{{props.row.clientFName}} {{props.row.clientLName}}</b></div>
-                                                <div class="column q-gutter-sm q-pt-sm">
-                                                    <div style="font-family: 'Montserrat', sans-serif;" class="row justify-between">
-                                                        <div>Package Name:</div>
-                                                        <div v-if="props.row.clientSelectPackage === 'CUSTOMIZE'">{{props.row.clientSelectPackage}}</div>
-                                                        <div v-else>{{props.row.clientSelectPackage.name}}</div>
+                                                <div class="column items-center" style="font-size:25px;font-family: 'Lobster', cursive; "><b>{{props.row.clientFName}} {{props.row.clientLName}}</b></div>
+                                                <div class="column q-gutter-sm q-pt-sm" style="font-family: 'Montserrat', sans-serif;">
+                                                    
+                                                        <div class="text-weight-bold">Package Name:</div>
+                                                        <div class="text-right" v-if="props.row.clientSelectPackage === 'CUSTOMIZE'">{{props.row.clientSelectPackage}}</div>
+                                                        <div class="text-right" v-else>{{props.row.clientSelectPackage.name}}</div>
                                                         
-                                                    </div>
-                                                    <div style="font-family: 'Montserrat', sans-serif;" class="row justify-between">
-                                                        <div>Date:</div> 
-                                                        <div>{{$moment(props.row.clientReserveDate).format('LL')}}</div>
-                                                    </div>
-                                                    <div style="font-family: 'Montserrat', sans-serif;" class="row justify-between">
-                                                        <div>Time:</div>
-                                                        <div>{{props.row.clientStartTime}} - {{props.row.clientEndTime}}</div>
-                                                    </div>
-                                                    <div style="font-family: 'Montserrat', sans-serif;" class="row justify-between">
-                                                        <div>Number of Pax:</div>
-                                                        <div class="q-pl-xl q-ml-xl" v-show="props.row.clientPackageType != 'FIXED'">{{props.row.clientPax}} Guest</div><div><span v-show="props.row.clientPackageType === 'FIXED'">{{props.row.clientPaxDetails}}</span></div>                                 
-                                                    </div>
-                                                    <div class="row q-px-lg q-pt-sm justify-between">
+                                                    
+                                                        <div class="text-weight-bold">Date:</div> 
+                                                        <div class="text-right">{{$moment(props.row.clientReserveDate).format('LL')}}</div>
+                                                   
+                                                        <div class="text-weight-bold">Time:</div>
+                                                        <div class="text-right">{{props.row.clientStartTime}} - {{props.row.clientEndTime}}</div>
+                                                   
+                                                        <div class="text-weight-bold">Number of Pax:</div>
+                                                        <div class="text-right" v-show="props.row.clientPackageType != 'FIXED'">{{props.row.clientPax}} Guest</div><div><span v-show="props.row.clientPackageType === 'FIXED'">{{props.row.clientPaxDetails}}</span></div>                                 
+                                                   
+                                                    <div class="row justify-between q-px-md q-pt-sm q-gutter-md">
                                                     <q-btn dense class="bg-orange-4" @click="geteditNew(props.row)" text-color="white" label="View Details" />
-                                                    <q-btn dense class="bg-orange-4" @click="getedit(props.row)" text-color="white" label="Payment" />
+                                                    <q-btn dense class="bg-orange-4" style="width:110px" @click="getedit(props.row)" text-color="white" label="Payment" />
                                                     </div>
                                                 </div>
                                             
@@ -107,35 +102,31 @@
                            <div class="row q-gutter-md">
                               <q-table grid :data="returnClientFinishReservations" :columns="columnss" :filter="search_reserve" :rows-per-page-options="[0]" hide-bottom :pagination.sync="paginations" row-key=".key">
                                 <template v-slot:item="props">
-                                <div class="q-pa-sm">
-                                    <q-card style="width: 400px" class="my-card rounded-borders">
+                                <div>
+                                    <q-card style="width: 300px" class="my-card rounded-borders">
                                         <q-card-section>
                                                 <div class="column items-center">
                                                 <img style="height:100%;width:100px" src="statics/pics/logo.png">
                                                 </div>
-                                                <div class="column items-center" style="font-size:35px;font-family: 'Lobster', cursive; "><b>{{props.row.clientFName}} {{props.row.clientLName}}</b></div>
-                                                <div class="column q-gutter-sm q-pt-sm">
-                                                    <div style="font-family: 'Montserrat', sans-serif;" class="row justify-between">
-                                                        <div>Package Name:</div>
-                                                        <div v-if="props.row.clientSelectPackage === 'CUSTOMIZE'">{{props.row.clientSelectPackage}}</div>
-                                                        <div v-else>{{props.row.clientSelectPackage.name}}</div>
-                                                        
-                                                    </div>
-                                                    <div style="font-family: 'Montserrat', sans-serif;" class="row justify-between">
-                                                        <div>Date:</div> 
-                                                        <div>{{$moment(props.row.clientReserveDate).format('LL')}}</div>
-                                                    </div>
-                                                    <div style="font-family: 'Montserrat', sans-serif;" class="row justify-between">
-                                                        <div>Time:</div>
-                                                        <div>{{props.row.clientStartTime}} - {{props.row.clientEndTime}}</div>
-                                                    </div>
-                                                    <div style="font-family: 'Montserrat', sans-serif;" class="row justify-between">
-                                                        <div>Number of Pax:</div>
-                                                        <div class="q-pl-xl q-ml-xl" v-show="props.row.clientPackageType != 'FIXED'">{{props.row.clientPax}} Guest</div><div><span v-show="props.row.clientPackageType === 'FIXED'">{{props.row.clientPaxDetails}}</span></div>                                 
-                                                    </div>
-                                                    <div class="row q-px-lg q-pt-sm justify-between">
+                                                <div class="column items-center" style="font-size:25px;font-family: 'Lobster', cursive; "><b>{{props.row.clientFName}} {{props.row.clientLName}}</b></div>
+                                                <div class="column q-gutter-sm q-pt-sm" style="font-family: 'Montserrat', sans-serif;">
+                                                    
+                                                        <div class="text-weight-bold">Package Name:</div>
+                                                        <div class="text-right" v-if="props.row.clientSelectPackage === 'CUSTOMIZE'">{{props.row.clientSelectPackage}}</div>
+                                                        <div class="text-right" v-else>{{props.row.clientSelectPackage.name}}</div>
+                                                    
+                                                        <div class="text-weight-bold">Date:</div> 
+                                                        <div class="text-right">{{$moment(props.row.clientReserveDate).format('LL')}}</div>
+                                                    
+                                                        <div class="text-weight-bold">Time:</div>
+                                                        <div class="text-right">{{props.row.clientStartTime}} - {{props.row.clientEndTime}}</div>
+                                                    
+                                                        <div class="text-weight-bold">Number of Pax:</div>
+                                                        <div class="text-right" v-show="props.row.clientPackageType != 'FIXED'">{{props.row.clientPax}} Guest</div><div><span v-show="props.row.clientPackageType === 'FIXED'">{{props.row.clientPaxDetails}}</span></div>                                 
+                                                    
+                                                    <div class="row justify-between q-px-md q-pt-sm q-gutter-md">
                                                     <q-btn dense class="bg-orange-4" @click="geteditNew(props.row)" text-color="white" label="View Details" />
-                                                    <q-btn dense class="bg-orange-4" @click="getedit(props.row)" text-color="white" label="Payment" />
+                                                    <q-btn style="width:110px" dense class="bg-orange-4" @click="getedit(props.row)" text-color="white" label="Payment" />
                                                     </div>
                                                 </div>
                                             
@@ -150,47 +141,45 @@
                         </div>
                 </q-tab-panel>
 <!-- END OF RESERVATION AREA -->
+
                 <q-tab-panel name="cancel">
-                    <div class="row justify-between">
-                        <div style="font-size:50px;font-family: 'Montserrat', sans-serif;" class="q-pl-md">Cancelled Events</div>
-                        <q-input filled v-model="search_cancel" style="width:400px" label="Search">
+                    <div>
+                        <div style="font-size:30px;font-family: 'Montserrat', sans-serif;">Cancelled Events</div>
+                        <q-input dense filled v-model="search_cancel" label="Search">
                                 <template v-slot:prepend>
                                 <q-icon name="search" color="orange"/>
                                 </template>
                         </q-input>
                     </div>
-                    <div class="row q-gutter-md">
+                    <div class="column q-gutter-md">
                         <q-table grid :data="Cancelled" :columns="columnss" :filter="search_cancel" :rows-per-page-options="[0]" hide-bottom :pagination.sync="paginations" row-key=".key">
                         <template v-slot:item="props">
                         <div class="q-pa-sm">
-                            <q-card style="width: 400px" class="my-card rounded-borders">
+                            <q-card class="my-card rounded-borders" style="width:320px">
                                 <q-card-section>
                                         <div class="column items-center">
                                         <img style="height:100%;width:100px" src="statics/pics/logo.png">
                                         </div>
-                                        <div class="column items-center" style="font-size:35px;font-family: 'Lobster', cursive; "><b>{{props.row.clientFName}} {{props.row.clientLName}}</b></div>
-                                        <div class="column q-gutter-sm q-pt-sm">
-                                            <div style="font-family: 'Montserrat', sans-serif;" class="row justify-between">
-                                                <div>Package Name:</div>
-                                                <div v-if="props.row.clientSelectPackage === 'CUSTOMIZE'">{{props.row.clientSelectPackage}}</div>
-                                                <div v-else>{{props.row.clientSelectPackage.name}}</div>
+                                        <div class="column items-center" style="font-size:25px;font-family: 'Lobster', cursive; "><b>{{props.row.clientFName}} {{props.row.clientLName}}</b></div>
+                                        <div class="column q-pt-sm" style="font-family: 'Montserrat', sans-serif;">
+                                            
+                                                <div class="text-weight-bold">Package Name:</div>
+                                                <div class="text-right" v-if="props.row.clientSelectPackage === 'CUSTOMIZE'">{{props.row.clientSelectPackage}}</div>
+                                                <div class="text-right" v-else>{{props.row.clientSelectPackage.name}}</div>
                                                 
-                                            </div>
-                                            <div style="font-family: 'Montserrat', sans-serif;" class="row justify-between">
-                                                <div>Date:</div> 
-                                                <div>{{$moment(props.row.clientReserveDate).format('LL')}}</div>
-                                            </div>
-                                            <div style="font-family: 'Montserrat', sans-serif;" class="row justify-between">
-                                                <div>Time:</div>
-                                                <div>{{props.row.clientStartTime}} - {{props.row.clientEndTime}}</div>
-                                            </div>
-                                            <div style="font-family: 'Montserrat', sans-serif;" class="row justify-between">
-                                                <div>Number of Pax:</div>
-                                                <div class="q-pl-xl q-ml-xl" v-show="props.row.clientPackageType != 'FIXED'">{{props.row.clientPax}} Guest</div><div><span v-show="props.row.clientPackageType === 'FIXED'">{{props.row.clientPaxDetails}}</span></div>                                 
-                                            </div>
-                                            <div class="row q-px-lg q-pt-sm justify-between">
+                                           
+                                                <div class="text-weight-bold">Date:</div> 
+                                                <div class="text-right">{{$moment(props.row.clientReserveDate).format('LL')}}</div>
+                                           
+                                                <div class="text-weight-bold">Time:</div>
+                                                <div class="text-right">{{props.row.clientStartTime}} - {{props.row.clientEndTime}}</div>
+                                            
+                                                <div class="text-weight-bold">Number of Pax:</div>
+                                                <div class="text-right"     v-show="props.row.clientPackageType != 'FIXED'">{{props.row.clientPax}} Guest</div><div><span v-show="props.row.clientPackageType === 'FIXED'">{{props.row.clientPaxDetails}}</span></div>                                 
+                                            
+                                            <div class="row q-px-md q-pt-sm justify-between">
                                             <q-btn dense class="bg-orange-4" @click="geteditNew(props.row)" text-color="white" label="View Details" />
-                                            <q-btn dense class="bg-orange-4" @click="getedit(props.row)" text-color="white" label="Payment" />
+                                            <q-btn dense class="bg-orange-4" style="width:110px" @click="getedit(props.row)" text-color="white" label="Payment" />
                                             </div>
                                         </div>
                                     
@@ -202,10 +191,9 @@
                     </div>
                 </q-tab-panel>
                 </q-tab-panels>
-            </template>
             
-            </q-splitter>
-            </div>
+            </div>  
+
             <q-dialog v-model="detailsAndPayment" style="height:550px" full-width >
             <q-card class="my-card">
                 <q-card-section>
@@ -213,49 +201,51 @@
                 </q-card-section>
 
                 <q-card-section class="q-pt-none">
-                <div class="row flex flex-center">
+                <div class="column flex flex-center">
                     <q-img src="statics/pics/logo.png" :ratio="1" style="width:3.5em;" class="q-ml-sm"/>
-                    <q-toolbar-title v-if="$q.screen.gt.xs" shrink class="row items-center no-wrap">
-                        <strong>Crissy's Meal Magic Catering Services</strong>
+                    <q-toolbar-title class="column items-center">
+                        <strong style="font-size:19px">Crissy's Meal Magic Catering</strong>
+                        <strong style="font-size:19px">Services</strong>
                     </q-toolbar-title>
                 </div>
-                <div class="row">
-                    <div class="q-pa-sm column col-9">
-                        <b class="col">FULLNAME: <i>{{this.selectedReservation.clientFName}} {{this.selectedReservation.clientLName}}</i></b> 
-                        <b class="col">PLACE OF EVENTS: <i>{{this.selectedReservation.clientPlace}} {{this.selectedReservation.clientCity}}</i></b>
-                        <b v-if="this.selectedReservation.clientPackageType != 'FIXED'" class="col">PLACE OF EVENTS: <i>{{this.selectedReservation.clientPax}}Guest</i></b>
-                        <b v-else class="col">PAX: <i>{{this.selectedReservation.clientSelectPackage.adultPax}} Adults & {{this.selectedReservation.clientSelectPackage.kidPax}} Kids</i></b> 
-                        <b class="col">Motif: <i>{{this.selectedReservation.clientMotif}}</i></b>
+                <div class="column q-gutter-sm q-pt-sm">
+                    
+                        <b>FULLNAME: <i>{{this.selectedReservation.clientFName}} {{this.selectedReservation.clientLName}}</i></b> 
+                        <b>PLACE OF EVENTS: <i>{{this.selectedReservation.clientPlace}} {{this.selectedReservation.clientCity}}</i></b>
+                        <b v-if="this.selectedReservation.clientPackageType != 'FIXED'">PLACE OF EVENTS: <i>{{this.selectedReservation.clientPax}}Guest</i></b>
+                        <b v-else>PAX: <i>{{this.selectedReservation.clientSelectPackage.adultPax}} Adults & {{this.selectedReservation.clientSelectPackage.kidPax}} Kids</i></b> 
+                        <b>Motif: <i>{{this.selectedReservation.clientMotif}}</i></b>
                         <div v-if="this.selectedReservation.clientSelectTheme != ''">
-                        <b v-for="(price, index) in this.selectedReservation.clientSelectTheme" :key="index" class="col">Theme: <i>{{price.themeName}}</i></b>
+                        <b v-for="(price, index) in this.selectedReservation.clientSelectTheme" :key="index">Theme: <i>{{price.themeName}}</i></b>
                         </div>
                         <div v-else>
-                        <b class="col">Theme: <i>NONE</i></b>
+                        <b>Theme: <i>NONE</i></b>
                         </div>
-                    </div>
-                    <div class="q-pa-sm column col-3">
-                        <b class="col">DATE OF EVENTS: <i>{{this.selectedReservation.clientReserveDate}}</i></b> 
-                        <b class="col">TIME: <i>{{this.selectedReservation.clientStartTime}} - {{this.selectedReservation.clientEndTime}}</i></b>
-                        <b class="col">EVENT: <i>{{this.selectedReservation.clientEvent}}</i></b>
-                        <b class="col">Email: <i>{{this.selectedReservation.clientEmail}}</i></b>
-                        <b class="col">Package Type: <i>{{this.selectedReservation.clientPackageType}} PACKAGE</i></b>
-                    </div>
+                    
+                        <b>DATE OF EVENTS: <i>{{this.selectedReservation.clientReserveDate}}</i></b> 
+                        <b>TIME: <i>{{this.selectedReservation.clientStartTime}} - {{this.selectedReservation.clientEndTime}}</i></b>
+                        <b>EVENT: <i>{{this.selectedReservation.clientEvent}}</i></b>
+                        <b>Email: <i>{{this.selectedReservation.clientEmail}}</i></b>
+                        <b>Package Type: <i>{{this.selectedReservation.clientPackageType}} PACKAGE</i></b>
+                    
                 </div>
-                <q-separator inset />   
-                <div class="row justify-center q-px-xl q-pt-lg q-gutter-md">   
-                    <div style="width:700px">
-                        <div class="q-pa-sm">
-                                <div class="row">
-                                    <div>
-                                        <b class="q-pa-xl">Total Payment: <i>P</i> {{this.selectedReservation.clientTotalPayment}}</b>
-                                        <b class="q-pa-xl">Paid Amount: <i>P</i> {{this.selectedReservation.clientPaidAmount}}</b>
-                                        <b btnclass="q-pa-xl">Current Balance: <q-btn flat dense @click="payamount" color="orange-8"><i v-show="this.currentBalance != 0">P&nbsp;</i> {{this.currentBalance === 0 ? 'NO BALANCE' : this.currentBalance,}}</q-btn></b>
-                                    </div>
+                <div class="q-py-md">
+                    <q-separator inset />   
+                </div>
+                <div>   
+                    <div>
+                        <div>
+                                <div class="column q-gutter-sm">                        
+                                    <b>Total Payment: <i>P</i> {{this.selectedReservation.clientTotalPayment}}</b>
+                                    <b>Paid Amount: <i>P</i> {{this.selectedReservation.clientPaidAmount}}</b>
+                                    <b>Current Balance: <q-btn flat dense @click="payamount" color="orange-8"><i v-show="this.currentBalance != 0">P&nbsp;</i> {{this.currentBalance === 0 ? 'NO BALANCE' : this.currentBalance,}}</q-btn></b>
                                 </div>
                                 <div v-show="this.currentBalance != 0" class="q-pa-sm">
-                                    <q-input type="number" class="col" color="orange-8" outlined v-model="enterAmount" label="Enter Amount To Pay"/>
+                                    <q-input dense type="number" class="col" color="orange-8" outlined v-model="enterAmount" label="Enter Amount To Pay"/>
                                 </div>
-                                <q-separator inset/>
+                                <div class="q-py-md">
+                                    <q-separator inset/>
+                                </div>
                                 <div v-show="this.currentBalance != 0" class="column items-center">
                                     <div class="column items-center text-weight-bold">Pay via Card</div>
                                 </div>
@@ -278,6 +268,9 @@
                 </q-card-section>
             </q-card>
         </q-dialog>
+
+
+
         <q-dialog v-model="reschedCancel" full-height >
             <q-card class="shadow-0" style="width: 1000px; max-width: 100vw;">
                 <q-card-section>
@@ -285,39 +278,41 @@
                 </q-card-section>
 
                 <q-card-section class="q-pt-none">
-                <div class="row flex flex-center">
+                <div class="column flex flex-center">
                     <q-img src="statics/pics/logo.png" :ratio="1" style="width:3.5em;" class="q-ml-sm"/>
-                    <q-toolbar-title v-if="$q.screen.gt.xs" shrink class="row items-center no-wrap">
-                        <strong>Crissy's Meal Magic Catering Services</strong>
+                    <q-toolbar-title class="column items-center">
+                        <strong style="font-size:19px">Crissy's Meal Magic Catering</strong>
+                        <strong style="font-size:19px">Services</strong>
                     </q-toolbar-title>
                 </div>
-                <div class="row">
-                    <div class="q-pa-sm column col-7">
-                        <b class="col">FULLNAME: <i>{{this.selectedReservation.clientFName}} {{this.selectedReservation.clientLName}}</i></b> 
-                        <b class="col">Place: <i>{{this.selectedReservation.clientPlace}} {{this.selectedReservation.clientCity}}</i></b>
-                        <b v-if="this.selectedReservation.clientPackageType != 'FIXED'" class="col">PAX: <i>{{this.selectedReservation.clientPax}}Guest</i></b>
-                        <b v-else class="col">PAX: <i>{{this.selectedReservation.clientSelectPackage.adultPax}} Adults & {{this.selectedReservation.clientSelectPackage.kidPax}} Kids</i></b> 
-                        <b class="col">Motif: <i>{{this.selectedReservation.clientMotif}}</i></b>
+                <div class="column q-gutter-sm q-pt-sm">
+                    
+                        <b>FULLNAME: <i>{{this.selectedReservation.clientFName}} {{this.selectedReservation.clientLName}}</i></b> 
+                        <b>Place: <i>{{this.selectedReservation.clientPlace}} {{this.selectedReservation.clientCity}}</i></b>
+                        <b v-if="this.selectedReservation.clientPackageType != 'FIXED'">PAX: <i>{{this.selectedReservation.clientPax}}Guest</i></b>
+                        <b v-else>PAX: <i>{{this.selectedReservation.clientSelectPackage.adultPax}} Adults & {{this.selectedReservation.clientSelectPackage.kidPax}} Kids</i></b> 
+                        <b>Motif: <i>{{this.selectedReservation.clientMotif}}</i></b>
                         <div v-if="this.selectedReservation.clientSelectTheme != ''">
-                        <b v-for="(price, index) in this.selectedReservation.clientSelectTheme" :key="index" class="col">Theme: <i>{{price.themeName}}</i></b>
+                        <b v-for="(price, index) in this.selectedReservation.clientSelectTheme" :key="index">Theme: <i>{{price.themeName}}</i></b>
                         </div>
                         <div v-else>
-                        <b class="col">Theme: <i>NONE</i></b>
+                        <b>Theme: <i>NONE</i></b>
                         </div>
-                    </div>
-                    <div class="q-pa-sm column col-5">
-                        <b class="col">DATE OF EVENTS: <i>{{this.selectedReservation.clientReserveDate}}</i></b> 
-                        <b class="col">TIME: <i>{{this.selectedReservation.clientStartTime}} - {{this.selectedReservation.clientEndTime}}</i></b>
-                        <b class="col">EVENT: <i>{{this.selectedReservation.clientEvent}}</i></b>
-                        <b class="col">Email: <i>{{this.selectedReservation.clientEmail}}</i></b>
-                        <b class="col">Package Type: <i>{{this.selectedReservation.clientPackageType}} PACKAGE</i></b>
-                    </div>
+                    
+                        <b>DATE OF EVENTS: <i>{{this.selectedReservation.clientReserveDate}}</i></b> 
+                        <b>TIME: <i>{{this.selectedReservation.clientStartTime}} - {{this.selectedReservation.clientEndTime}}</i></b>
+                        <b>EVENT: <i>{{this.selectedReservation.clientEvent}}</i></b>
+                        <b>Email: <i>{{this.selectedReservation.clientEmail}}</i></b>
+                        <b>Package Type: <i>{{this.selectedReservation.clientPackageType}} PACKAGE</i></b>
+                    
                 </div>
-                <q-separator inset />           
-                <div class="row">
-                    <div class="q-pa-sm col-4">
+                <div class="q-py-md">
+                    <q-separator inset />           
+                </div>
+                <div class="column">
+                    <div>
                         <q-item>
-                        <span class="full-width text-weight-bold">FOOD CHOICES</span>
+                        <span class="text-weight-bold">FOOD CHOICES</span>
                         </q-item>
                         <q-list dense v-for="(price, index) in this.selectedReservation.clientFoodChoice" :key="index">
                             <q-item>
@@ -326,7 +321,7 @@
                                 </q-item-section>
                             </q-item>
                         </q-list>
-                        <span v-show="this.selectedReservation.clientAdditionalFood != ''" class="full-width text-weight-bold">Additional Food</span>
+                        <span v-show="this.selectedReservation.clientAdditionalFood != ''" class="full-width text-weight-bold q-pl-md">Additional Food</span>
                         <q-list dense v-for="(price, index) in this.selectedReservation.clientAdditionalFood" :key="index">
                             <q-item>
                                 <q-item-section>
@@ -335,9 +330,9 @@
                             </q-item>
                         </q-list>
                     </div>
-                    <div v-show="this.selectedReservation.clientPackageType != 'CUSTOMIZE'" class="q-pa-sm col-4">
+                    <div v-show="this.selectedReservation.clientPackageType != 'CUSTOMIZE'">
                         <q-item>
-                            <span class="full-width text-weight-bold " >INCLUSIONS</span>
+                            <span class="text-weight-bold " >INCLUSIONS</span>
                         </q-item>
                             <q-item dense v-for="(price, index) in this.returnFree.inclusions" :key="index" class="">
                                 <q-item-section >
@@ -357,9 +352,9 @@
                                 </q-item-section>
                         </q-item>
                     </div>
-                    <div v-show="this.selectedReservation.clientAddons != 0 || this.selectedReservation.clientServices != 0" class="q-pa-sm col-4">
+                    <div v-show="this.selectedReservation.clientAddons != 0 || this.selectedReservation.clientServices != 0">
                         <q-item>
-                            <span class="full-width text-weight-bold " >Add-Ons & Services</span>
+                            <span class="text-weight-bold " >Add-Ons & Services</span>
                         </q-item>
                         <q-item dense v-for="(price, index) in this.selectedReservation.clientAddons" :key="index" class="">
                             <q-item-section >
@@ -378,23 +373,23 @@
                     </div>
                 </div>
                 <div>
-                    <div class="column">
-                        <b class="col-12">Total Payment: <i>P</i> {{this.selectedReservation.clientTotalPayment}}</b>
-                        <b class="col-12">Paid Amount: <i>P</i> {{this.selectedReservation.clientPaidAmount}}</b>
-                        <b btnclass="col-12">Current Balance: <q-btn flat dense @click="payamount" color="orange-8"><i v-show="this.currentBalance != 0">P&nbsp;</i> {{this.currentBalance === 0 ? 'NO BALANCE' : this.currentBalance,}}</q-btn></b>
+                    <div class="column q-gutter-sm">
+                        <b>Total Payment: <i>P</i> {{this.selectedReservation.clientTotalPayment}}</b>
+                        <b>Paid Amount: <i>P</i> {{this.selectedReservation.clientPaidAmount}}</b>
+                        <b>Current Balance: <q-btn flat dense @click="payamount" color="orange-8"><i v-show="this.currentBalance != 0">P&nbsp;</i> {{this.currentBalance === 0 ? 'NO BALANCE' : this.currentBalance,}}</q-btn></b>
                     </div>
                 </div>
                 </q-card-section>
                 <q-separator inset />
-                <q-card-actions v-show="this.tab != 'cancel'" class="q-pa-xl" align="center">
-                    <q-btn dense class="bg-orange-4 bodyText" text-color="white" @click="medium = true" icon="mdi-calendar" label="Reschedule Event" />
-                    <q-btn dense class="bg-orange-4 bodyText" text-color="white" @click="printNow" icon="print" label="Print Contract" />
-                    <q-btn dense class="bg-orange-4 bodyText" text-color="white" @click="cancelNow" icon="cancel" label="Cancel Event" />
+                <q-card-actions v-show="this.tab != 'cancel'" class="column q-gutter-sm q-px-md">
+                    <q-btn dense class="bg-orange-4 bodyText full-width" text-color="white" @click="medium = true" icon="mdi-calendar" label="Reschedule Event" />
+                    <q-btn dense class="bg-orange-4 bodyText full-width" text-color="white" @click="cancelNow" icon="cancel" label="Cancel Event" />
                 </q-card-actions>
             </q-card>
         </q-dialog>
+
         <q-dialog v-model="medium" >
-            <q-card style="width: 700px; max-width: 80vw;">
+            <q-card>
             
             <q-card-section>
                 <div class="text-h6">Select New Time And Date</div>
@@ -402,13 +397,13 @@
 
             <q-card-section class="q-pt-none">
                 <div class="column items-center">
-                    <div class="row">
+                    <div>
                         <div>
-                            <q-date v-model="dates" mask="YYYY/MM/DD" color="deep-orange-4" today-btn/>
+                            <q-input type="time" mask="YYYY-MM-DD HH:mm:ss" color="deep-orange-3" dense outlined v-model="startTime" hint="Start Time" />
+                            <q-input type="time" mask="YYYY-MM-DD HH:mm:ss" dense color="deep-orange-3" outlined v-model="endTime" hint="End Time"/>
                         </div>
-                        <div class="q-pa-xl">
-                            <q-input type="time" mask="YYYY-MM-DD HH:mm:ss" class="q-pt-xl q-pl-sm" color="deep-orange-3" dense outlined style="width: 170px" v-model="startTime" hint="Start Time" />
-                            <q-input type="time" class="q-pt-xl q-ml-sm" mask="YYYY-MM-DD HH:mm:ss" dense style="width: 163px" color="deep-orange-3" outlined v-model="endTime" hint="End Time"/>
+                        <div class="q-pt-md">
+                            <q-date minimal v-model="dates" mask="YYYY/MM/DD" color="deep-orange-4" today-btn/>
                         </div>
                     </div>
                 </div>
@@ -770,6 +765,30 @@ export default {
                         this.updatePaymentCard()
                     })
         }
+    },
+    tempLogout(){
+            this.$q.dialog({
+                title: `Are you sure you want to logout?`,
+                type: 'negative',
+                color: 'orange-7',
+                class: 'text-grey-8',
+                icon: 'warning',
+                ok: 'Ok',
+                cancel: 'Cancel',
+                persistent: true
+                
+            }).onOk(()=>{
+              this.$firebase.auth().signOut()
+              .then(()=>{
+                console.log('no user')
+                this.show = false
+                this.displayName = ''
+                this.$router.push('/loginmob')
+                location.reload()
+              })
+              // 
+              // remove this comment if you are done with the testing
+            })
     },
   }
 }

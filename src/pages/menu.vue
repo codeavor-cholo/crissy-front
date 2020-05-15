@@ -1,19 +1,21 @@
 <template>
     <q-page class="col">
+<!-- START OF DESTKTOP -->
+        <div class="desktop-only">
         <div style="font-size:40px;font-family: 'Bree Serif', serif;">Food we Offer:</div>
         <div class="q-pt-md row q-gutter-lg">
-            <q-table grid :data="returnFood" :columns="columns" :rows-per-page-options="[0]" hide-bottom :pagination.sync="pagination" :filter="filter" class="row items-center q-pa-lg q-ma-lg">
+            <q-table grid :data="returnFood" :columns="columns" :rows-per-page-options="[0]" hide-bottom :pagination.sync="pagination" :filter="filter" class="row items-center">
                 <template v-slot:item="props"> 
                     <div class="row q-pa-sm">
-                        <q-card class="my-card q-pa-md col-3" style="width:252px;height:260px">
-                            <img :src="props.row.foodPic" style="width:250px;height:180px">
+                        <q-card flat class="my-card q-pa-md col-4" style="width:200px;height:260px">
+                            <img :src="props.row.foodPic" style="width:170px;height:130px">
                             <q-card-section align="left" style="margin:3px;padding:1px;width: 200px">
                             <div class="row">
                             <div class="column">       
                             <div class="q-pt-sm">     
                             <b>{{props.row.foodName}}</b>
                             </div>
-                            <div class="text-subtitle2">{{props.row.foodPrice}}</div>
+                            
                             </div>
                             </div>
                             </q-card-section>
@@ -22,6 +24,36 @@
                   </template>
             </q-table>
         </div>
+        </div>
+<!-- END OF DESKTOP -->
+
+<!-- START OF MOBILE -->
+        <div class="mobile-only">
+        <div class="q-pa-md" style="font-size:30px;font-family: 'Bree Serif', serif;">Food we Offer:</div>
+        <div class="row q-gutter-lg">
+            <q-table grid :data="returnFood" :columns="columns" :rows-per-page-options="[0]" hide-bottom :pagination.sync="pagination" :filter="filter" class="row items-center">
+                <template v-slot:item="props"> 
+                    <div class="row q-pa-md">
+                        <q-card flat class="my-card q-pa-md col-4 " style="width:350px;height:250px">
+                            <img :src="props.row.foodPic" style="width:300px;height:220px">
+                            <q-card-section align="left" style="margin:3px;padding:1px;width: 200px">
+                            <div class="row">
+                            <div class="column">       
+                            <div class="q-pt-sm">     
+                            <b>{{props.row.foodName}}</b>
+                            </div>
+                            
+                            </div>
+                            </div>
+                            </q-card-section>
+                        </q-card>
+                    </div>           
+                  </template>
+            </q-table>
+        </div>
+        </div>
+<!-- END OF MOBILE -->
+
     </q-page>
 </template>
 <script>
