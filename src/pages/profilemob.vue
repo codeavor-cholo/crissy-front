@@ -23,12 +23,12 @@
                         
                         <div>
                         
-                        <q-img style="height:100%;width:300px" src="statics/pics/foo.jpeg" />
+                        <q-img style="height:100%;width:300px" :src="userDetails.photoURL" />
                         
                         <div class="column justify-center q-pt-lg q-gutter-md">
-                        <div class="q-pl-sm" style="font-family: 'Montserrat', sans-serif;">Name: Codeavor</div>
-                        <div class="q-pl-sm" style="font-family: 'Montserrat', sans-serif;">Contact Number: 0999-999-9999</div>
-                        <div class="q-pl-sm" style="font-family: 'Montserrat', sans-serif;">Address: Tondo, Manila</div>
+                        <div class="q-pl-sm" style="font-family: 'Montserrat', sans-serif;">Name: {{userDetails.displayName}}</div>
+                        <div class="q-pl-sm" style="font-family: 'Montserrat', sans-serif;">Contact Number: {{userDetails.phoneNumber}} <q-btn size="sm" color="orange-8" icon="add" label="add" rounded class="q-ml-md" v-show="userDetails.phoneNumber == null" /></div>
+                        <div class="q-pl-sm" style="font-family: 'Montserrat', sans-serif;">Email Address: {{userDetails.email}}</div>
                         </div>
                         
                         </div>
@@ -426,6 +426,7 @@ export default {
      },
   data () {
     return {
+    userDetails: {},
       search_cancel: '',
       Cancelled: [],
       dates: date.formatDate(new Date(), 'YYYY/MM/DD'),
@@ -469,6 +470,7 @@ export default {
           console.log('user',gg.displayName)
           self.uid = gg.uid
           self.displayName = gg.displayName
+          self.userDetails = gg
         }
     })
   },

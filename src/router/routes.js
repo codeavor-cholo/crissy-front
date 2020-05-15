@@ -22,7 +22,7 @@ const routes = [
        { path: '/profilemob', component: () => import('pages/profilemob.vue') },
     ]
   },
-  { path: '/loginmob', component: () => import('pages/loginmob.vue') },
+  { path: '/login', component: () => import('pages/loginmob.vue') },
 ]
 
 // Always leave this as last one
