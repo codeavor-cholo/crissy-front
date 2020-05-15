@@ -19,12 +19,12 @@
 
 
     <div v-show="!splashscreen">
-    <q-card class="my-card fixed-center shadow-0" style=" top:50%; left:50%; transform: translate(-50%, -50%); height:350px; width:320px; box-sizing: border-box; background:rgba(255,255,255,0.7) ; border-radius:25px;">
+    <q-card class="my-card fixed-center shadow-0" style=" top:50%; left:50%; transform: translate(-50%, -50%); height:370px; width:320px; box-sizing: border-box; background:rgba(255,255,255,0.7) ; border-radius:25px;">
         <div>
-          <q-icon name="person" class="bg-white text-orange-4 q-pa-md" style="font-size:100px;overflow:hidden; position:absolute; top:calc(-100px/2); left:calc(50% - 50px); border-radius:50%; "></q-icon>
+          <q-img src="statics/pics/logo.png" style="width:120px; height:120px;  overflow:hidden; position:absolute; top:calc(-100px/2); left:calc(50% - 50px); border-radius:50%;" :ratio="1" basic spinner-color="white"></q-img>
           <!-- <q-img src="statics/bg/3.png"  :ratio="1" basic spinner-color="white"></q-img> -->
         </div>
-        <div class="text-pink-5" style="margin:0; padding:85px 0 0;text-align:center;font-size:30px;font-family: 'Simonetta', serif;"></div>
+        <div class="text-pink-5" style="margin:0; padding:65px 0 0;text-align:center;font-size:30px;font-family: 'Simonetta', serif;"></div>
       <q-card-section>
         <q-input color="orange-4" outlined style="width:290px; margin-bottom: 20px; border: none; border-bottom: 1px solid #fff; background: white; outline:none; height:50px; color:#fff; font-size: 16px;" v-model="email" type="text" prefix="Username:">
         <template v-slot:append>
@@ -44,14 +44,13 @@
           </q-avatar>
         </template>
       </q-input>
-      </q-card-section>
-      <q-card-actions>
-        <div class="row q-px-md items-center">                     
-          <q-btn color="orange-4" class="col" label="LOGIN VIA GOOGLE" @click="loginGoogle"/>
-          <div class="text-overline text-center col">OR</div>
-          <q-btn color="grey" label="LOGIN account" class="col"/>
+
+       <div class="column items-center q-px-md q-py-lg">                     
+          <q-btn rounded class="full-width glossy" color="grey" label="LOGIN account"/>
+          <div class="text-overline text-center">OR</div>
+          <q-btn rounded class="full-width glossy" color="orange-4" label="LOGIN VIA GOOGLE" @click="loginGoogle"/>
           </div>
-      </q-card-actions>
+      </q-card-section>
     </q-card>
 <!-- 
     <q-dialog v-model="registerDialog">
