@@ -20,7 +20,7 @@
           <div class="row items-center q-gutter-md" style="padding-right:30px;padding-left:260px">
           <div>
               <q-btn dense flat style="font-size: 1.3em;" round icon="notifications" text-color="orange-4" color="white" @click="$router.push('/notification')">
-                <q-badge color="black" text-color="white" :label="returnLengthForToday" floating v-show="returnLengthForToday !=0"/>
+                <q-badge color="black" text-color="white" :label="returnLengthForToday.length" floating v-show="returnLengthForToday !=0"/>
               </q-btn>
           </div>  
           <q-btn-dropdown dense  v-show="!show" text-color="orange-8" :label="displayName" flat="">
@@ -69,7 +69,7 @@
           
           <div>
               <q-btn dense flat style="font-size: 1.3em;" round icon="notifications" text-color="orange-4" color="white" @click="$router.push('/notification')">
-                <q-badge color="black" text-color="white" :label="returnLengthForToday" floating v-show="returnLengthForToday !=0"/>
+                <q-badge color="black" text-color="white" :label="returnLengthForToday.length" floating v-show="returnLengthForToday !=0"/>
               </q-btn>
           </div> 
 
@@ -219,6 +219,7 @@
 </template>
 
 <script>
+import { date } from 'quasar'
 export default {
   data () {
     return {
@@ -300,9 +301,15 @@ export default {
                     let status = b.status
                     let data = this.getDataOfReservations(keys,b.reservationKey)
                     console.log(status,'status')
-                    let notif = {...data.data}
+                    let notif
+                    if(data == null){
+                    notif = null
+                    } else {
+                    notif = data.data
                     notif.dateTime = b.dateTime
-                    notif.notifStatus = status
+                    notif.notifStatus = b.status
+                    }
+                    return notif !== null
                     console.log(notif,'notif')
                     myNotifs.push(notif)
                 })
@@ -335,6 +342,7 @@ export default {
                     return date.formatDate(a.dateTime,'MM-DD-YYYY') == date.formatDate(new Date(),'MM-DD-YYYY')
                 })
             } catch (error) {
+              console.log(error,'error')
                 return 0
             }
         }
