@@ -380,6 +380,8 @@ export default {
           })
 
           console.log('newUser',newUser)
+          this.login = false
+          this.loginmob = false
 
         }).catch(function(error) {
         // Handle Errors here.

@@ -160,7 +160,7 @@
                         </q-input>
                     </div>
                     <div class="row q-gutter-md">
-                        <q-table grid :data="Cancelled" :columns="columnss" :filter="search_cancel" :rows-per-page-options="[0]" hide-bottom :pagination.sync="paginations" row-key=".key">
+                        <q-table grid :data="cancelledevents" :columns="columnss" :filter="search_cancel" :rows-per-page-options="[0]" hide-bottom :pagination.sync="paginations" row-key=".key">
                         <template v-slot:item="props">
                         <div class="q-pa-sm">
                             <q-card style="width: 400px" class="my-card rounded-borders">
@@ -490,6 +490,10 @@ export default {
       })
   },
   computed:{
+      cancelledevents(){
+          console.log(this.$lodash.filter(this.Cancelled,a=>{return a.clientUID == this.uid}))
+          return this.$lodash.filter(this.Cancelled,a=>{return a.clientUID == this.uid})
+      },
       addTotalPaid(){
             try {
                 let totalpack =  parseInt(this.selectedReservation.clientPaidAmount) + parseInt(this.amountOnCard)
