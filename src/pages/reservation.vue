@@ -78,7 +78,7 @@
                                         </div>
                                     </div>
                                      <span class="q-mb-none q-mt-md text-h6 text-weight-light"> Select <span class="text-orange-8 text-h6"> 1 </span> Theme (optional)</span>
-                                    <div class="row q-mb-xl">
+                                    <div class="row q-mb-xl q-pb-xl">
                                         <q-card class="my-card col-4 q-ma-sm cursor-pointer" v-for="(choice,j) in Theme" :key="j" :style="returnSelectedStatusTheme(choice) ? 'transform: scale(0.95);' : ''" :class="returnSelectedStatusTheme(choice) ? 'bg-orange text-white' : ''" style="border-radius:20px;" @click.native="clickUnclickAddTheme(choice)">
                                         <q-img 
                                           :src="choice.themePic"
@@ -96,7 +96,7 @@
                                     </div>
                                 </div>
                                 
-                                <q-stepper-navigation class="q-mt-md">
+                                <q-stepper-navigation class="q-mt-xl q-pt-xl">
                                 <q-btn @click="step = 3" color="orange-8" label="Continue" />
                                 <q-btn flat @click="step = 1" color="orange-8" label="Back" class="q-ml-sm" />
                                 </q-stepper-navigation>
