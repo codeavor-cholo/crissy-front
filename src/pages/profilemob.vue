@@ -152,7 +152,7 @@
                         </q-input>
                     </div>
                     <div class="column q-gutter-md">
-                        <q-table grid :data="Cancelled" :columns="columnss" :filter="search_cancel" :rows-per-page-options="[0]" hide-bottom :pagination.sync="paginations" row-key=".key">
+                        <q-table grid :data="returnClientCancelled" :columns="columnss" :filter="search_cancel" :rows-per-page-options="[0]" hide-bottom :pagination.sync="paginations" row-key=".key">
                         <template v-slot:item="props">
                         <div class="q-pa-sm">
                             <q-card class="my-card rounded-borders" style="width:320px">
@@ -527,6 +527,13 @@ export default {
       returnClientFinishReservations(){
           console.log(this.$lodash.filter(this.Reservation,a=>{return a.clientUID == this.uid}))
           return this.$lodash.filter(this.Reservation,a=>{return a.clientUID == this.uid && a.clientReserveDate < date.formatDate(new Date(), 'YYYY/MM/DD')})
+      },
+      returnClientCancelled(){
+          try {
+              return this.$lodash.filter(this.Cancelled,a=>{return a.clientUID == this.uid})
+          } catch (error) {
+              return []
+          }
       }
   },
   methods:{
