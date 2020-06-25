@@ -289,7 +289,7 @@ export default {
   methods:{
     proceedToReservations(){
       //local storage code
-      if(this.$firebase.auth().currentUser.emailVerified){
+
         if(this.name == '' || this.eventType == ''){
             this.$q.dialog({
               title: `Unable To Continue`,
@@ -318,18 +318,10 @@ export default {
           this.$router.push('/reservation/'+random)
         }
 
-
-
-      } else {
-        this.$router.push('/confirmEmail/pending')
-      }
-
-
-
     },
     proceedToMobReservations(){
       //local storage code
-      if(this.$firebase.auth().currentUser.emailVerified){
+
         if(this.name == '' || this.eventType == ''){
             this.$q.dialog({
               title: `Unable To Continue`,
@@ -358,11 +350,6 @@ export default {
           this.$router.push('/mobres/'+random)
         }
 
-
-
-      } else {
-        this.$router.push('/confirmEmail/pending')
-      }
     }
   }
 }

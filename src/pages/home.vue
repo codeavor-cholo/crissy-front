@@ -217,7 +217,7 @@
     </div>
 <!-- END OF LOGIN DIALOG MOBILE -->v
     <q-dialog v-model="registerDialog" persistent>
-      <q-card>
+      <q-card style="width:80vw">
         <q-card-section class="row items-center">
           <div class="text-h6 text-center col text-orange-7 text-weight-bold">Register for an Account</div>
         </q-card-section>
@@ -288,7 +288,7 @@ export default {
                 
               } else {
                 self.displayName = gg.displayName
-                                //if mobile screen $q.screen.lt.sm
+                //if mobile screen $q.screen.lt.sm
                 if(self.$q.platform.is.cordova){
                   self.$router.push('/login')
                 } else {
@@ -533,6 +533,19 @@ export default {
               var errorMessage = error.message;
               console.log(errorCode,'error')
               console.log(errorMessage,'error')
+              self.$q.dialog({
+                  title: errorCode,
+                  message: errorMessage,
+                  type: 'negative',
+                  color: 'orange-7',
+                  class: 'text-grey-8',
+                  icon: 'warning',
+                  ok: 'Ok',
+                  persistent: true
+                  
+              }).onOk(()=>{
+                self.registerDialog = true
+              })                
               // ...
             });
 
