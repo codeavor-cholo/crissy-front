@@ -26,7 +26,7 @@
         </div>
         <div class="text-pink-5" style="margin:0; padding:65px 0 0;text-align:center;font-size:30px;font-family: 'Simonetta', serif;"></div>
       <q-card-section>
-        <q-input color="orange-4" outlined style="width:290px; margin-bottom: 20px; border: none; border-bottom: 1px solid #fff; background: white; outline:none; height:50px; color:#fff; font-size: 16px;" v-model="email" type="text" prefix="Username:">
+        <q-input color="orange-4" outlined style="width:290px; margin-bottom: 20px; border: none; border-bottom: 1px solid #fff; background: white; outline:none; height:50px; color:#fff; font-size: 16px;" v-model="email" type="text" prefix="Email:">
         <template v-slot:append>
           <q-avatar>
             <q-icon name="person" />
@@ -46,7 +46,7 @@
       </q-input>
 
        <div class="column items-center q-px-md q-py-lg">                     
-          <q-btn rounded class="full-width glossy" color="grey" label="LOGIN account"/>
+          <q-btn rounded class="full-width glossy" color="grey" label="LOGIN account" @click="loginUserSignIn"/>
           <div class="text-overline text-center">OR</div>
           <q-btn rounded class="full-width glossy" color="orange-4" label="LOGIN VIA GOOGLE" @click="loginGoogle"/>
           </div>
@@ -160,6 +160,34 @@ export default {
         });
                   
     },
+    loginUserSignIn(){
+      let self = this
+      this.$firebase.auth().signInWithEmailAndPassword(this.email, this.password)
+      .then(()=>{
+        self.login = false
+        self.loginmob = false
+      })
+      .catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        self.$q.dialog({
+            title: errorCode,
+            message: errorMessage,
+            type: 'negative',
+            color: 'orange-7',
+            class: 'text-grey-8',
+            icon: 'warning',
+            ok: 'Ok',
+            persistent: true
+            
+        }).onOk(()=>{
+          self.login = true
+          self.loginmob = true
+        })        
+        // ...
+      });      
+    }
     }
 
 }

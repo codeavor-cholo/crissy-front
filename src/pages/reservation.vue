@@ -78,7 +78,7 @@
                                         </div>
                                     </div>
                                      <span class="q-mb-none q-mt-md text-h6 text-weight-light"> Select <span class="text-orange-8 text-h6"> 1 </span> Theme (optional)</span>
-                                    <div class="row q-mb-xl">
+                                    <div class="row q-mb-xl q-pb-xl">
                                         <q-card class="my-card col-4 q-ma-sm cursor-pointer" v-for="(choice,j) in Theme" :key="j" :style="returnSelectedStatusTheme(choice) ? 'transform: scale(0.95);' : ''" :class="returnSelectedStatusTheme(choice) ? 'bg-orange text-white' : ''" style="border-radius:20px;" @click.native="clickUnclickAddTheme(choice)">
                                         <q-img 
                                           :src="choice.themePic"
@@ -96,7 +96,7 @@
                                     </div>
                                 </div>
                                 
-                                <q-stepper-navigation class="q-mt-md">
+                                <q-stepper-navigation class="q-mt-xl q-pt-xl">
                                 <q-btn @click="step = 3" color="orange-8" label="Continue" />
                                 <q-btn flat @click="step = 1" color="orange-8" label="Back" class="q-ml-sm" />
                                 </q-stepper-navigation>
@@ -397,13 +397,33 @@
                               :done="step > 9"
                           >      
                               <div v-if="paymentPermission == false">
-                                <span class="q-mb-none q-mt-md text-h6 text-weight-light"> Login First Before Proceeding to Payment</span>
-                                <br>
-                                <div class="row q-mt-md">
-                                  <q-btn  rounded color="orange-8" label="LOGIN VIA GOOGLE" @click="loginGoogle" />
-                                  <div class="q-ma-sm q-mx-lg">OR</div>
-                                  <q-btn  rounded color="grey-10" label="LOGIN VIA EMAIL AND PASSWORD"/>
+
+                                <div v-if="isEmailVerified == 'pending'">
+                                    <div class="text-h6">Please verify your email <span class="text-orange-7">{{registerEmail}}</span>.</div>
+                                    <div>We have sent an verification email to your email.</div>
+                                    <div class="q-mt-md q-gutter-md">
+                                        <q-btn color="grey-10" icon-right="send" label="Resend" @click="resendEmail" />
+                                        <q-btn flat color="grey-10" icon="check" label="click here if you already verified your email" @click="clickThis" />
+                                    </div>
                                 </div>
+                                
+                                <div v-else>
+                                  <span class="q-mb-none q-mt-md text-h6 text-weight-light"> Login First Before Proceeding to Payment</span>
+                                  <br>
+                                  <div class="row q-mt-md">
+                                    <q-btn  rounded color="orange-8" label="LOGIN VIA GOOGLE" @click="loginGoogle" />
+                                    <div class="q-ma-sm q-mx-lg">OR</div>
+                                    <q-btn  rounded color="grey-10" label="LOGIN VIA EMAIL AND PASSWORD" @click="login = true"/>
+                                  </div>
+                                  <div class="row q-mt-md">
+                                    <div class="">Don't have a account ? <q-btn color="orange-7" flat v-close-popup label="create one here"  dense @click="registerDialog = true" /></div>
+                                  </div>
+                                </div>
+
+
+
+
+
                               </div>
                               <div v-else>
                                 <span class="q-mb-none q-mt-md text-h6 text-weight-light"> Select Payment Terms</span>
@@ -713,6 +733,47 @@
 <!-- END OF RIGHT PART -->
 
         </div>
+        <q-dialog v-model="login">
+          <q-card>
+            <q-card-section>
+              <div class="text-h6 text-center">Login Account</div>
+            </q-card-section>
+
+            <q-card-section class="q-pt-none text-center">
+              <q-input v-model="clientEmailLogin" type="email" label="Enter Email Address" style="width:420px;" class="q-pa-sm q-px-md" outlined="" color="orange-7" dense/>
+              <q-input v-model="clientPasswordLogin" type="password" label="Enter Password" style="width:420px;" class="q-pa-sm q-px-md" outlined="" color="orange-7" dense/>
+              <div class="row q-px-md q-mt-md">
+                                    
+              <q-btn color="grey-10" label="LOGIN account" class="col q-mb-md" @click="loginUserSignIn"/>
+
+              </div>
+              
+            </q-card-section>
+          </q-card>
+        </q-dialog>
+      <q-dialog v-model="registerDialog" persistent>
+        <q-card style="width:80vw">
+          <q-card-section class="row items-center">
+            <div class="text-h6 text-center col text-orange-7 text-weight-bold">Register for an Account</div>
+          </q-card-section>
+          <q-card-section v-if="loadingRegistration !== true">
+            <q-input v-model="registerName" type="text" label="Enter Full Name" class="q-pa-sm q-px-md" outlined="" color="orange-7" dense/>
+            <q-input v-model="registerEmail" type="email" label="Enter Email Address" class="q-pa-sm q-px-md" outlined="" color="orange-7" dense/>
+            <q-input v-model="registerPassword" type="password" label="Enter Password" class="q-pa-sm q-px-md" outlined="" color="orange-7" dense/>
+            <q-input v-model="registerConfirmPassword" type="password" label="Confirm Password" class="q-pa-sm q-px-md" outlined="" color="orange-7" dense/>
+          </q-card-section>
+          <q-card-section v-else>
+                  <q-spinner
+                    color="primary"
+                    size="3em"
+                  />
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn flat label="cancel" color="grey" v-close-popup />
+            <q-btn flat label="Register" color="orange-7" v-close-popup @click="registerUser"/>
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
 </template>
 <style>
@@ -729,6 +790,16 @@ export default {
   },
   data () {
     return {
+      loadingRegistration: false,
+      registrationProgress: false,
+      registerName: '',
+      registerEmail:'',
+      registerPassword: '123456',
+      registerConfirmPassword: '123456',
+      registerDialog: false,
+      login: false,
+      clientEmailLogin: '',
+      clientPasswordLogin: '',
       publishableKey: 'pk_test_kUO5j8FaZUKitD1Qh3ibZ2HP00YkxaEOOS', 
       token: null,
       charge: null,
@@ -781,22 +852,25 @@ export default {
      details5: false,
      paymentPermission: false,
      clientUID: '',
-     clientEmail: ''
+     clientEmail: '',
+     userLogged: {}
     }
   },
   created(){
       this.reservation = this.$q.localStorage.getItem(this.$route.params.id)
       let self = this
       this.$firebase.auth().onAuthStateChanged(function(user) {
-          if (user) {
+          if (user.emailVerified) {
             console.log('with user')
             self.clientUID = user.uid
             self.clientEmail = user.email
             self.paymentPermission = true
+            self.userLogged = {...user}
           } else {
             self.clientUID = ''
             self.clientEmail = ''
             self.paymentPermission = false
+            self.userLogged = null
           }
       })
   },
@@ -1190,9 +1264,21 @@ export default {
           return 1000000
         }
       },
+      isEmailVerified(){
+        let user = this.userLogged
+        console.log('isEmailVerified',user)
+        if(user !== null && user.emailVerified){
+          return 'verified'
+        } else if(this.registrationProgress == false){
+          return 'verified'
+        } else {
+          return 'pending'
+        }
+      }
 
   },
   methods:{
+    
     stepChecker(){
         
     },
@@ -1200,11 +1286,18 @@ export default {
         // console.log('dates',dates)
         let eventToConsider = this.reservation.clientEventType
         let baseCount = eventToConsider == 'Debut' || eventToConsider == 'Wedding' ? 2 : 1
-        // console.log(baseCount,'baseCount')
+        console.log(baseCount,'baseCount')
 
         let today = new Date()
-        let format = date.formatDate(today,'YYYY/MM/DD')
-        if(format < dates){
+        let today1week = date.addToDate(today,{days: 6})
+        let format = date.formatDate(today1week,'YYYY/MM/DD')
+        let today1month = date.addToDate(today,{month: 1})
+        let formatMonth = date.formatDate(today1month,'YYYY/MM/DD')
+
+        let basisToClose = eventToConsider == 'Debut' || eventToConsider == 'Wedding' ? formatMonth : format
+
+
+        if(basisToClose < dates){
             let eventsBase = []
             let length = 0
 
@@ -1589,6 +1682,162 @@ export default {
       } else {
         return false
       }
+    },
+    loginUserSignIn(){
+      let self = this
+      this.$firebase.auth().signInWithEmailAndPassword(this.clientEmailLogin, this.clientPasswordLogin)
+      .then(()=>{
+        self.login = false
+        self.loginmob = false
+      })
+      .catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        self.$q.dialog({
+            title: errorCode,
+            message: errorMessage,
+            type: 'negative',
+            color: 'orange-7',
+            class: 'text-grey-8',
+            icon: 'warning',
+            ok: 'Ok',
+            persistent: true
+            
+        }).onOk(()=>{
+          self.login = true
+          self.loginmob = true
+        })        
+        // ...
+      });      
+    },
+    registerUser(){
+      try {
+        if(this.registerEmail == '' || this.registerName == '' || this.registerPassword == '' || this.registerConfirmPassword == ''){
+          this.$q.dialog({
+              title: `Fill up all required fields`,
+              type: 'negative',
+              color: 'orange-7',
+              class: 'text-grey-8',
+              icon: 'warning',
+              ok: 'Ok',
+              persistent: true
+              
+          }).onOk(()=>{
+            this.registerDialog = true
+          })
+        } else {
+
+          if(this.registerPassword !== this.registerConfirmPassword){
+            this.$q.dialog({
+                title: `Password does not match`,
+                type: 'negative',
+                color: 'orange-7',
+                class: 'text-grey-8',
+                icon: 'warning',
+                ok: 'Ok',
+                persistent: true
+                
+            }).onOk(()=>{
+              this.registerPassword = ''
+              this.registerConfirmPassword = ''
+              this.registerDialog = true
+            })
+          } else {
+            this.loadingRegistration = true
+            let vm = this
+            this.$firebase.auth().createUserWithEmailAndPassword(this.registerEmail, this.registerPassword)
+            .then((res)=>{
+              console.log(res,'result')
+              let user = this.$firebase.auth().currentUser
+              user.sendEmailVerification().then(function() {
+                  console.log('email sent')
+                  
+                  let newUser = {
+                      gAccessToken: '',
+                      displayName: vm.registerName,
+                      email: vm.registerEmail,
+                      emailVerified: user.emailVerified,
+                      refreshToken: user.refreshToken
+                  }     
+
+                  vm.$firestoreApp.collection('Customers').doc(user.uid).set(newUser)
+                  .then(()=>{
+                    user.updateProfile({
+                        displayName: vm.registerName,
+                    })
+                    vm.registrationProgress = true
+                    vm.loadingRegistration = false
+                    console.log('saved user')
+                    console.log('newUser',newUser)  
+                  })
+                  .catch((error)=>{
+                  console.log(error,'error saving registrants')
+                  })
+
+              }).catch(function(error) {
+                  console.log(error,'error email')
+              });
+            })
+            .catch(function(error) {
+              // Handle Errors here.
+              var errorCode = error.code;
+              var errorMessage = error.message;
+              console.log(errorCode,'error')
+              console.log(errorMessage,'error')
+              self.$q.dialog({
+                  title: errorCode,
+                  message: errorMessage,
+                  type: 'negative',
+                  color: 'orange-7',
+                  class: 'text-grey-8',
+                  icon: 'warning',
+                  ok: 'Ok',
+                  persistent: true
+                  
+              }).onOk(()=>{
+                self.registerDialog = true
+              })                
+              // ...
+            });
+
+
+          }
+
+        }
+   
+      } catch (error) {
+        console.log(error,'registerUser')
+      }
+    },
+    resendEmail(){
+        var user = this.$firebase.auth().currentUser;
+        user.sendEmailVerification().then(function() {
+              console.log('email sent')
+        })
+    },
+    clickThis(){
+        this.$firebase.auth().currentUser.reload()
+        let user = this.$firebase.auth().currentUser
+        console.log(user,'user reload')
+        if(user.emailVerified == false){
+          this.$q.dialog({
+              title: 'Email still not verified',
+              message: 'Try resending the verification email',
+              type: 'negative',
+              color: 'orange-7',
+              class: 'text-grey-8',
+              icon: 'warning',
+              ok: 'Ok',
+              persistent: true
+              
+          }).onOk(()=>{
+          })                  
+        } else {
+            this.userLogged = user
+            this.registrationProgress = false
+            this.$firebase.auth().signOut()
+        }
     }
   }
 }

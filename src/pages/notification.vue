@@ -1,7 +1,7 @@
 <template>
     <q-page id="page">
         <div id="noti" class="text-weight-bold">
-           <span v-if="returnLengthForToday == 0">No </span><span v-else>{{returnLengthForToday}}</span> New Notifications
+           <span v-if="returnLengthForToday == 0">No </span><span v-else>{{returnLengthForToday.length}}</span> New Notifications
         </div>
 
         <div id="list">
@@ -30,6 +30,7 @@
     </q-page>
 </template>
 <script>
+import { date } from 'quasar'
 export default {
     data(){
         return {
@@ -82,9 +83,15 @@ export default {
                     let status = b.status
                     let data = this.getDataOfReservations(keys,b.reservationKey)
                     console.log(status,'status')
-                    let notif = {...data.data}
+                    let notif
+                    if(data == null){
+                    notif = null
+                    } else {
+                    notif = data.data
                     notif.dateTime = b.dateTime
-                    notif.notifStatus = status
+                    notif.notifStatus = b.status
+                    }
+                    return notif !== null
                     console.log(notif,'notif')
                     myNotifs.push(notif)
                 })
@@ -92,8 +99,11 @@ export default {
                 let join = myNotifs.concat(this.getPaymentNotifs)
                 console.log(this.$lodash.orderBy(join,'dateTime','desc'),'ordersss')
 
-                return this.$lodash.orderBy(join,'dateTime','desc')
+                return this.$lodash.orderBy(join,b=>{
+                    return new Date(b.dateTime)
+                },'desc')
             } catch (error) {
+                console.log(error,'returnWithUserUID')
                 return []
             }
         },
