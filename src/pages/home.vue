@@ -170,18 +170,19 @@
                                 
           <q-btn color="orange-7"  label="LOGIN VIA GOOGLE" @click="loginGoogle" class="col-5"/>
           <div class="text-overline text-center col-2">OR</div>
-          <q-btn color="grey" label="LOGIN account" class="col"/>
+          <q-btn color="grey" label="LOGIN account" class="col" @click="loginUserSignIn"/>
 
           </div>
           
         </q-card-section>
 
-        <q-card-section class="q-pt-none q-mb-md text-center">
-          
+        <q-card-section class="q-pt-none q-mb-sm text-center">
+          <div class="">Don't have a account ? <q-btn color="orange-7" flat v-close-popup label="create one here"  dense @click="registerDialog = true" /></div>
           
         </q-card-section>
       </q-card>
     </q-dialog>
+
     </div>
 <!-- END OF LOGIN DIALOG DESKTOP -->
 
@@ -200,9 +201,10 @@
           <div class="row q-px-md items-center q-mt-md">                     
           <q-btn color="orange-7"  label="LOGIN VIA GOOGLE" @click="loginGoogle" class="col-5"/>
           <div class="text-overline text-center col-2">OR</div>
-          <q-btn color="grey" label="LOGIN account" class="col"/>
+          <q-btn color="grey" label="LOGIN account" class="col" @click="loginUserSignIn"/>
 
           </div>
+          <div class="">Don't have a account ? <q-btn color="orange-7" flat v-close-popup label="create one here"  dense @click="registerDialog = true" /></div>
           
         </q-card-section>
 
@@ -213,13 +215,29 @@
       </q-card>
     </q-dialog>
     </div>
-<!-- END OF LOGIN DIALOG MOBILE -->
-
+<!-- END OF LOGIN DIALOG MOBILE -->v
+    <q-dialog v-model="registerDialog" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <div class="text-h6 text-center col text-orange-7 text-weight-bold">Register for an Account</div>
+        </q-card-section>
+        <q-card-section>
+          <q-input v-model="registerName" type="text" label="Enter Full Name" class="q-pa-sm q-px-md" outlined="" color="orange-7" dense/>
+          <q-input v-model="registerEmail" type="email" label="Enter Email Address" class="q-pa-sm q-px-md" outlined="" color="orange-7" dense/>
+          <q-input v-model="registerPassword" type="password" label="Enter Password" class="q-pa-sm q-px-md" outlined="" color="orange-7" dense/>
+          <q-input v-model="registerConfirmPassword" type="password" label="Confirm Password" class="q-pa-sm q-px-md" outlined="" color="orange-7" dense/>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="cancel" color="grey" v-close-popup />
+          <q-btn flat label="Register" color="orange-7" v-close-popup @click="registerUser"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-layout>
 </template>
 
 <script>
-import { date } from 'quasar'
+import { date, QDialog } from 'quasar'
 export default {
   data () {
     return {
@@ -227,13 +245,18 @@ export default {
       login: false,
       loginmob: false,
       clientEmail: '',
+      registerName: '',
+      registerEmail:'',
+      registerPassword: '123456',
+      registerConfirmPassword: '123456',
       clientPassword: '',
       search: '',
       show: true,
       displayName: '',
       ClientNotifications: [],
       Reservation: [],
-      AdminNotifications: []
+      AdminNotifications: [],
+      registerDialog: false,
 
     }
   },
@@ -264,10 +287,12 @@ export default {
                 self.displayName = gg.displayName
                 
               } else {
+                self.displayName = gg.displayName
                                 //if mobile screen $q.screen.lt.sm
                 if(self.$q.platform.is.cordova){
                   self.$router.push('/login')
                 } else {
+                  // self.$router.push('/')
                   self.$router.push('/')
                   self.show = true
                 }
@@ -436,6 +461,118 @@ export default {
               // remove this comment if you are done with the testing
             })
     },
+    registerUser(){
+      try {
+        if(this.registerEmail == '' || this.registerName == '' || this.registerPassword == '' || this.registerConfirmPassword == ''){
+          this.$q.dialog({
+              title: `Fill up all required fields`,
+              type: 'negative',
+              color: 'orange-7',
+              class: 'text-grey-8',
+              icon: 'warning',
+              ok: 'Ok',
+              persistent: true
+              
+          }).onOk(()=>{
+            this.registerDialog = true
+          })
+        } else {
+
+          if(this.registerPassword !== this.registerConfirmPassword){
+            this.$q.dialog({
+                title: `Password does not match`,
+                type: 'negative',
+                color: 'orange-7',
+                class: 'text-grey-8',
+                icon: 'warning',
+                ok: 'Ok',
+                persistent: true
+                
+            }).onOk(()=>{
+              this.registerPassword = ''
+              this.registerConfirmPassword = ''
+              this.registerDialog = true
+            })
+          } else {
+            let vm = this
+            this.$firebase.auth().createUserWithEmailAndPassword(this.registerEmail, this.registerPassword)
+            .then((res)=>{
+              console.log(res,'result')
+              let user = this.$firebase.auth().currentUser
+              user.sendEmailVerification().then(function() {
+                  console.log('email sent')
+                  
+                  let newUser = {
+                      gAccessToken: '',
+                      displayName: vm.registerName,
+                      email: vm.registerEmail,
+                      emailVerified: user.emailVerified,
+                      refreshToken: user.refreshToken
+                  }     
+
+                  vm.$firestoreApp.collection('Customers').doc(user.uid).set(newUser)
+                  .then(()=>{
+                    user.updateProfile({
+                        displayName: vm.registerName,
+                    })
+                    vm.$router.push('confirmEmail/pending')                    
+                    console.log('saved user')
+                    console.log('newUser',newUser)  
+                  })
+                  .catch((error)=>{
+                  console.log(error,'error saving registrants')
+                  })
+
+              }).catch(function(error) {
+                  console.log(error,'error email')
+              });
+            })
+            .catch(function(error) {
+              // Handle Errors here.
+              var errorCode = error.code;
+              var errorMessage = error.message;
+              console.log(errorCode,'error')
+              console.log(errorMessage,'error')
+              // ...
+            });
+
+
+          }
+
+        }
+   
+      } catch (error) {
+        console.log(error,'registerUser')
+      }
+    },
+    loginUserSignIn(){
+      let self = this
+      this.$firebase.auth().signInWithEmailAndPassword(this.clientEmail, this.clientPassword)
+      .then(()=>{
+        self.login = false
+        self.loginmob = false
+      })
+      .catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        self.$q.dialog({
+            title: errorCode,
+            message: errorMessage,
+            type: 'negative',
+            color: 'orange-7',
+            class: 'text-grey-8',
+            icon: 'warning',
+            ok: 'Ok',
+            persistent: true
+            
+        }).onOk(()=>{
+          self.login = true
+          self.loginmob = true
+        })        
+        // ...
+      });      
+    }
   }
 }
 </script>

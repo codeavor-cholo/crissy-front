@@ -289,67 +289,80 @@ export default {
   methods:{
     proceedToReservations(){
       //local storage code
+      if(this.$firebase.auth().currentUser.emailVerified){
+        if(this.name == '' || this.eventType == ''){
+            this.$q.dialog({
+              title: `Unable To Continue`,
+              message: 'Please Fill Up Required Fields',
+              type: 'negative',
+              color: 'orange-6',
+              textColor: 'grey',
+              icon: 'warning',
+              ok: 'Ok'
+          })
+        } else {
+          let saveLocally = {
+            clientEvent: this.name,
+            clientEventType: this.eventType
+          }
 
-      if(this.name == '' || this.eventType == ''){
-          this.$q.dialog({
-            title: `Unable To Continue`,
-            message: 'Please Fill Up Required Fields',
-            type: 'negative',
-            color: 'orange-6',
-            textColor: 'grey',
-            icon: 'warning',
-            ok: 'Ok'
-        })
+
+          this.$q.localStorage.clear()
+          console.log(saveLocally,'save')
+          let sri = require('simple-random-id')
+          let random = sri(9)
+          this.$q.localStorage.set(random, saveLocally)
+          console.log(this.$q.localStorage.getItem(random),'data locally')
+          //push to reservation with key
+
+          this.$router.push('/reservation/'+random)
+        }
+
+
+
+      } else {
+        this.$router.push('/confirmEmail/pending')
       }
 
 
-      let saveLocally = {
-        clientEvent: this.name,
-        clientEventType: this.eventType
-      }
 
-
-      this.$q.localStorage.clear()
-      console.log(saveLocally,'save')
-      let sri = require('simple-random-id')
-      let random = sri(9)
-      this.$q.localStorage.set(random, saveLocally)
-      console.log(this.$q.localStorage.getItem(random),'data locally')
-      //push to reservation with key
-
-      this.$router.push('/reservation/'+random)
     },
     proceedToMobReservations(){
       //local storage code
+      if(this.$firebase.auth().currentUser.emailVerified){
+        if(this.name == '' || this.eventType == ''){
+            this.$q.dialog({
+              title: `Unable To Continue`,
+              message: 'Please Fill Up Required Fields',
+              type: 'negative',
+              color: 'orange-6',
+              textColor: 'grey',
+              icon: 'warning',
+              ok: 'Ok'
+          })
+        } else {
+          let saveLocally = {
+            clientEvent: this.name,
+            clientEventType: this.eventType
+          }
 
-      if(this.name == '' || this.eventType == ''){
-          this.$q.dialog({
-            title: `Unable To Continue`,
-            message: 'Please Fill Up Required Fields',
-            type: 'negative',
-            color: 'orange-6',
-            textColor: 'grey',
-            icon: 'warning',
-            ok: 'Ok'
-        })
+
+          this.$q.localStorage.clear()
+          console.log(saveLocally,'save')
+          let sri = require('simple-random-id')
+          let random = sri(9)
+          this.$q.localStorage.set(random, saveLocally)
+          console.log(this.$q.localStorage.getItem(random),'data locally')
+          //push to reservation with key
+
+          this.$router.push('/mobres/'+random)
+        }
+
+
+
+      } else {
+        this.$router.push('/confirmEmail/pending')
       }
-
-
-      let saveLocally = {
-        clientEvent: this.name,
-        clientEventType: this.eventType
-      }
-
-
-      this.$q.localStorage.clear()
-      console.log(saveLocally,'save')
-      let sri = require('simple-random-id')
-      let random = sri(9)
-      this.$q.localStorage.set(random, saveLocally)
-      console.log(this.$q.localStorage.getItem(random),'data locally')
-      //push to reservation with key
-
-      this.$router.push('/mobres/'+random)
     }
   }
 }

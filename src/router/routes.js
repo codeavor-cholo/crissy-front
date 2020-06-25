@@ -20,6 +20,7 @@ const routes = [
        { path: '/notification', component: () => import('pages/notification.vue') },
        { path: '/gallery', component: () => import('pages/gallery.vue') },
        { path: '/profilemob', component: () => import('pages/profilemob.vue') },
+       { path: '/confirmEmail/:type', component: () => import('pages/confirmEmail.vue') }, //confirmEmail
     ]
   },
   { path: '/login', component: () => import('pages/loginmob.vue') },

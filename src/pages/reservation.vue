@@ -1200,12 +1200,18 @@ export default {
         // console.log('dates',dates)
         let eventToConsider = this.reservation.clientEventType
         let baseCount = eventToConsider == 'Debut' || eventToConsider == 'Wedding' ? 2 : 1
-        // console.log(baseCount,'baseCount')
+        console.log(baseCount,'baseCount')
 
         let today = new Date()
         let today1week = date.addToDate(today,{days: 6})
         let format = date.formatDate(today1week,'YYYY/MM/DD')
-        if(format < dates){
+        let today1month = date.addToDate(today,{month: 1})
+        let formatMonth = date.formatDate(today1month,'YYYY/MM/DD')
+
+        let basisToClose = eventToConsider == 'Debut' || eventToConsider == 'Wedding' ? formatMonth : format
+
+
+        if(basisToClose < dates){
             let eventsBase = []
             let length = 0
 
