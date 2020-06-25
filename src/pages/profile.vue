@@ -665,7 +665,7 @@ export default {
             }).onOk(() => {
             this.$firestoreApp.collection('Reschedule').add(reschedBago)
             .then((ref) =>{
-                var id = this.reserveID
+                var id = this.reserveID  
                 this.$firestoreApp.collection('Reservation').doc(id).delete()
                 this.$q.notify({
                             title: 'Reschedule Event',
