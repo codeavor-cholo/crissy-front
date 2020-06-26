@@ -725,7 +725,7 @@ export default {
                 ok: 'Yes',
                 cancel: 'Cancel'
             }).onOk(() => {
-            this.$firestoreApp.collection('Reschedule').add(reschedBago)
+            this.$firestoreApp.collection('Reschedule').doc(this.reserveID).set(reschedBago)
             .then((ref) =>{
                 var id = this.reserveID  
                 this.$firestoreApp.collection('Reservation').doc(id).delete()
