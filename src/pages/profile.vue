@@ -8,6 +8,7 @@
                 <q-tab name="account" label="Account Details" />
                 <q-tab name="reserve" label="Reservation Details" />
                 <q-tab name="cancel" label="Cancelled Details" />
+                <q-tab name="resched" label="Reshedule Details" />
                 </q-tabs>
                 </div>
             </template>
@@ -160,7 +161,7 @@
                         </q-input>
                     </div>
                     <div class="row q-gutter-md">
-                        <q-table grid :data="returnClientCancelled" :columns="columnss" :filter="search_cancel" :rows-per-page-options="[0]" hide-bottom :pagination.sync="paginations" row-key=".key">
+                        <q-table grid :data="cancelledevents" :columns="columnss" :filter="search_cancel" :rows-per-page-options="[0]" hide-bottom :pagination.sync="paginations" row-key=".key">
                         <template v-slot:item="props">
                         <div class="q-pa-sm">
                             <q-card style="width: 400px" class="my-card rounded-borders">
@@ -182,6 +183,66 @@
                                             </div>
                                             <div style="font-family: 'Montserrat', sans-serif;" class="row justify-between">
                                                 <div>Time:</div>
+                                                <div>{{props.row.clientStartTime}} - {{props.row.clientEndTime}}</div>
+                                            </div>
+                                            <div style="font-family: 'Montserrat', sans-serif;" class="row justify-between">
+                                                <div>Number of Pax:</div>
+                                                <div class="q-pl-xl q-ml-xl" v-show="props.row.clientPackageType != 'FIXED'">{{props.row.clientPax}} Guest</div><div><span v-show="props.row.clientPackageType === 'FIXED'">{{props.row.clientPaxDetails}}</span></div>                                 
+                                            </div>
+                                            <div class="row q-px-lg q-pt-sm justify-between">
+                                            <q-btn dense class="bg-orange-4" @click="geteditNew(props.row)" text-color="white" label="View Details" />
+                                            <q-btn dense class="bg-orange-4" @click="getedit(props.row)" text-color="white" label="Payment" />
+                                            </div>
+                                        </div>
+                                    
+                                </q-card-section>
+                            </q-card>
+                        </div>
+                        </template>
+                        </q-table>
+                    </div>
+                </q-tab-panel>
+                <!-- REsched -->
+                <q-tab-panel name="resched">
+                    <div class="row justify-between">
+                        <div style="font-size:50px;font-family: 'Montserrat', sans-serif;" class="q-pl-md">Rescheduled Events</div>
+                        <q-input filled v-model="search_cancel" style="width:330px" label="Search">
+                                <template v-slot:prepend>
+                                <q-icon name="search" color="orange"/>
+                                </template>
+                        </q-input>
+                    </div>
+                    <div class="row q-gutter-md">
+                        <q-table grid :data="reschedevents" :columns="columnss" :filter="search_cancel" :rows-per-page-options="[0]" hide-bottom :pagination.sync="paginations" row-key=".key">
+                        <template v-slot:item="props">
+                        <div class="q-pa-sm">
+                            <q-card style="width: 400px" class="my-card rounded-borders">
+                                <q-card-section>
+                                        <div class="column items-center">
+                                        <img style="height:100%;width:100px" src="statics/pics/logo.png">
+                                        </div>
+                                        <div class="column items-center" style="font-size:35px;font-family: 'Lobster', cursive; "><b>{{props.row.clientFName}} {{props.row.clientLName}}</b></div>
+                                        <div class="column q-gutter-sm q-pt-sm">
+                                            <div style="font-family: 'Montserrat', sans-serif;" class="row justify-between">
+                                                <div>Package Name:</div>
+                                                <div v-if="props.row.clientSelectPackage === 'CUSTOMIZE'">{{props.row.clientSelectPackage}}</div>
+                                                <div v-else>{{props.row.clientSelectPackage.name}}</div>
+                                                
+                                            </div>
+                                            <div style="font-family: 'Montserrat', sans-serif;" class="row justify-between">
+                                                <div>from This Date:</div> 
+                                                <div>{{$moment(props.row.clientPrevReserveDate).format('LL')}}</div>
+                                            </div>
+                                            <div style="font-family: 'Montserrat', sans-serif;" class="row justify-between">
+                                                <div>to This Date:</div> 
+                                                <div>{{$moment(props.row.clientReserveDate).format('LL')}}</div>
+                                            </div>
+                                            <div style="font-family: 'Montserrat', sans-serif;" class="row justify-between">
+                                                <div>from this Time:</div>
+                                                <div>{{props.row.clientPrevStartTime}} - {{props.row.clientPrevEndTime}}</div>
+                                            </div>
+                                            <div style="font-family: 'Montserrat', sans-serif;" class="row justify-between">
+                                                <div>to this Time:</div>
                                                 <div>{{props.row.clientStartTime}} - {{props.row.clientEndTime}}</div>
                                             </div>
                                             <div style="font-family: 'Montserrat', sans-serif;" class="row justify-between">
@@ -386,7 +447,7 @@
                 </div>
                 </q-card-section>
                 <q-separator inset />
-                <q-card-actions v-show="this.tab != 'cancel'" class="q-pa-xl" align="center">
+                <q-card-actions v-show="this.tab != 'cancel' && this.tab != 'resched'" class="q-pa-xl" align="center">
                     <q-btn dense class="bg-orange-4 bodyText" text-color="white" @click="medium = true" icon="mdi-calendar" label="Reschedule Event" />
                     <q-btn dense class="bg-orange-4 bodyText" text-color="white" @click="printNow" icon="print" label="Print Contract" />
                     <q-btn dense class="bg-orange-4 bodyText" text-color="white" @click="cancelNow" icon="cancel" label="Cancel Event" />
@@ -411,6 +472,9 @@
                             <q-input type="time" class="q-pt-xl q-ml-sm" mask="YYYY-MM-DD HH:mm:ss" dense style="width: 163px" color="deep-orange-3" outlined v-model="endTime" hint="End Time"/>
                         </div>
                     </div>
+                    <div class="q-pa-lg">
+                        <q-input v-model="reason" style="width: 500px;height: 60px" hint="Please input a valid reason to Reschedule Event" color="deep-orange-3" outlined type="textarea" />
+                    </div>
                 </div>
             </q-card-section>
 
@@ -431,6 +495,7 @@ export default {
      },
   data () {
     return {
+      reason: '',
       search_cancel: '',
       Cancelled: [],
       dates: date.formatDate(new Date(), 'YYYY/MM/DD'),
@@ -444,6 +509,7 @@ export default {
       publishableKey: 'pk_test_kUO5j8FaZUKitD1Qh3ibZ2HP00YkxaEOOS', 
       token: null,
       charge: null,
+      Reschedule: [],
       selectedReservation: [],
       detailsAndPayment: false,
       tab: 'reserve',
@@ -484,12 +550,24 @@ export default {
       .then(Reservation => {
       console.log(Reservation, 'Reservation')
       }),
+    this.$binding('Reschedule', this.$firestoreApp.collection('Reschedule'))
+      .then(Reschedule => {
+      console.log(Reschedule, 'Reschedule')
+      }),
     this.$binding('Cancelled', this.$firestoreApp.collection('Cancelled'))
       .then(Cancelled => {
       console.log(Cancelled, 'Cancelled')
       })
   },
   computed:{
+      cancelledevents(){
+          console.log(this.$lodash.filter(this.Cancelled,a=>{return a.clientUID == this.uid}))
+          return this.$lodash.filter(this.Cancelled,a=>{return a.clientUID == this.uid})
+      },
+      reschedevents(){
+          console.log(this.$lodash.filter(this.Reschedule,a=>{return a.clientUID == this.uid}))
+          return this.$lodash.filter(this.Reschedule,a=>{return a.clientUID == this.uid})
+      },
       addTotalPaid(){
             try {
                 let totalpack =  parseInt(this.selectedReservation.clientPaidAmount) + parseInt(this.amountOnCard)
@@ -532,13 +610,6 @@ export default {
       returnClientFinishReservations(){
           console.log(this.$lodash.filter(this.Reservation,a=>{return a.clientUID == this.uid}))
           return this.$lodash.filter(this.Reservation,a=>{return a.clientUID == this.uid && a.clientReserveDate < date.formatDate(new Date(), 'YYYY/MM/DD')})
-      },
-      returnClientCancelled(){
-          try {
-              return this.$lodash.filter(this.Cancelled,a=>{return a.clientUID == this.uid})
-          } catch (error) {
-              return []
-          }
       }
   },
   methods:{
@@ -579,27 +650,34 @@ export default {
                 clientTokenID: this.selectedReservation.clientTokenID,
                 clientPaymentType: this.selectedReservation.clientPaymentType,
                 clientReserveType: this.selectedReservation.clientReserveType,
-                clientDateofReserve: this.selectedReservation.clientDateofReserve
+                clientDateofReserve: this.selectedReservation.clientDateofReserve,
+                clientReason: this.reason,
+                clientPrevReserveDate: this.selectedReservation.clientReserveDate,
+                clientPrevStartTime: this.selectedReservation.clientStartTime,
+                clientPrevEndTime: this.selectedReservation.clientEndTime,
+                clientDateResched: date.formatDate(new Date(), 'YYYY/MM/DD'),
         }
             this.$q.dialog({
-                    title: 'Reschedule Event',
-                    message: 'Reschedule This Event?',
-                    ok: 'Yes',
-                    cancel: 'Cancel'
-                }).onOk(() => { 
-                this.$firestoreApp.collection('Reservation').doc(this.reserveID).set(reschedBago)
-                .then((ref) =>{
-                        this.$q.notify({
-                            message: 'Event Rescheduled!',
-                            icon: 'mdi-folder-plus-outline',
-                            color: 'orange-8',
+                title: 'Reschedule Event',
+                message: 'Reschedule This Event?',
+                ok: 'Yes',
+                cancel: 'Cancel'
+            }).onOk(() => {
+            this.$firestoreApp.collection('Reschedule').add(reschedBago)
+            .then((ref) =>{
+                var id = this.reserveID  
+                this.$firestoreApp.collection('Reservation').doc(id).delete()
+                this.$q.notify({
+                            title: 'Reschedule Event',
+                            message: 'Please wait for the Admin to Accept your Rescheduling of Event Make sure your reason is Valid',
+                            color: 'grey-8',
                             textColor: 'white',
                             position: 'center'
-                            })
-                        })  
+                        })
+                        this.medium = false
+                        this.reschedCancel = false
                     })
-                    this.medium = false
-                    this.reschedCancel = false
+                })
     },
     cancelNow(){
         let cancelled = {
