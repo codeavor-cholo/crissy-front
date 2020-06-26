@@ -465,7 +465,7 @@
                 <div class="column items-center">
                     <div class="row">
                         <div>
-                            <q-date v-model="dates" mask="YYYY/MM/DD" color="deep-orange-4" today-btn/>
+                            <q-date v-model="dates" mask="YYYY/MM/DD" color="deep-orange-4" today-btn :options="date => dateToday(date)" :events="returnWithEvents"/>
                         </div>
                         <div class="q-pa-xl">
                             <q-input type="time" mask="YYYY-MM-DD HH:mm:ss" class="q-pt-xl q-pl-sm" color="deep-orange-3" dense outlined style="width: 170px" v-model="startTime" hint="Start Time" />
@@ -603,6 +603,7 @@ export default {
                 return data
             }
         },
+
       returnClientReservations(){
           console.log(this.$lodash.filter(this.Reservation,a=>{return a.clientUID == this.uid}))
           return this.$lodash.filter(this.Reservation,a=>{return a.clientUID == this.uid && a.clientReserveDate >= date.formatDate(new Date(), 'YYYY/MM/DD')})
@@ -613,6 +614,67 @@ export default {
       }
   },
   methods:{
+    returnWithEvents(dates){
+      let eventsBase = []
+      let length = 0
+
+      let filter = this.Reservation.forEach(a=>{
+        if(date.formatDate(dates,'YYYY-MM-DD') == date.formatDate(a.clientReserveDate,'YYYY-MM-DD')){
+          eventsBase.push(a)
+        }
+      })
+
+      if(eventsBase.length > 0){
+        return true
+      } else {
+        return false
+      }
+    },
+    dateToday(dates){
+        // console.log('dates',dates)
+        let eventToConsider = this.selectedReservation.clientEventType
+        let baseCount = eventToConsider == 'Debut' || eventToConsider == 'Wedding' ? 2 : 1
+        console.log(baseCount,'baseCount')
+
+        let today = new Date()
+        let today1week = date.addToDate(today,{days: 6})
+        let format = date.formatDate(today1week,'YYYY/MM/DD')
+        let today1month = date.addToDate(today,{month: 1})
+        let formatMonth = date.formatDate(today1month,'YYYY/MM/DD')
+
+        let basisToClose = eventToConsider == 'Debut' || eventToConsider == 'Wedding' ? formatMonth : format
+
+
+        if(basisToClose < dates){
+            let eventsBase = []
+            let length = 0
+
+            let filter = this.Reservation.forEach(a=>{
+              if(date.formatDate(dates,'YYYY-MM-DD') == date.formatDate(a.clientReserveDate,'YYYY-MM-DD')){
+                eventsBase.push(a)
+              }
+            })
+            // console.log('dates',dates)
+            // console.log(eventsBase,'eventBase')
+
+            eventsBase.forEach(b=>{
+              let count = b.clientEventType == 'Debut' || b.clientEventType == 'Wedding' ? 2 : 1
+              length = length + count
+            })
+
+            // console.log(length,'reservedCount')
+
+            let check = length + baseCount
+            
+            if(check <= 4){
+              console.log(check,dates)
+              return true
+            } else {
+              console.log('BLOCKED',dates)
+              return false
+            }
+        }
+    },
       formatTimeInput(time){
       //get time to format for display
       let baseDate = new Date(2020,1,1)
@@ -676,6 +738,7 @@ export default {
                         })
                         this.medium = false
                         this.reschedCancel = false
+                        this.tab = 'resched'
                     })
                 })
     },
